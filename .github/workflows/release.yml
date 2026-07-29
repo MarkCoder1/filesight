@@ -1,0 +1,96 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and Release
+    strategy:
+      matrix:
+        os: [macos-14, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Package
+        run: npm run dist
+        env:
+          NODE_ENV: production
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-build
+          path: dist/*
+          if-no-files-found: error
+
+  create-release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: FileSight ${{ github.ref_name }}
+          body: |
+            ## FileSight ${{ github.ref_name }}
+
+            ### Installation
+
+            Download the appropriate package for your platform below.
+
+            **macOS:** Download the `.dmg` file, open it, and drag the app to your Applications folder.
+
+            **Windows:** Download the `.exe` installer and run it.
+
+            **Linux:** Download the `.AppImage`, `.deb`, or `.rpm` package.
+
+            ### Features
+
+            - File scanning with progress reporting
+            - Storage insights by category, size, and age
+            - Duplicate detection using content hashing
+            - Safe cleanup to system Trash/Recycle Bin
+            - Scan history with trend charts
+            - Privacy-first: everything runs locally
+
+            ### Checksums
+
+            SHA256 checksums for all artifacts are included below.
+          files: |
+            macos-14-build/*
+            windows-latest-build/*
+            ubuntu-latest-build/*
+          generate_release_notes: false

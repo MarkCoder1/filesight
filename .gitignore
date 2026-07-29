@@ -19,6 +19,8 @@
 
 # production
 /build
+/electron-dist/
+/dist/
 
 # misc
 .DS_Store
@@ -39,3 +41,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ai coding agent config
+AGENTS.md
+CLAUDE.md
