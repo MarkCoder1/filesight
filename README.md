@@ -116,6 +116,10 @@ Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 [MIT](./LICENSE) — see [LICENSE](./LICENSE) for details.
 
 ---
+## Download
+
+Get FileSight:
+[Download Latest Release](https://github.com/MarkCoder1/filesight/releases/latest)
 
 <p align="center">
   <sub>Built with Electron + Next.js. Runs entirely on your device.</sub>
