@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-  <img src="./assets/logo/logo.svg" width="80" height="80" alt="FileSight Logo" />
+  <img src="./assets/logo/filesight.png" width="80" height="80" alt="FileSight Logo" />
   <h1 align="center">FileSight</h1>
   <p align="center">
     <strong>Understand your files. Reclaim your space.</strong>
