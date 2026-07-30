@@ -12,17 +12,26 @@ interface FileRowProps {
   file: FileEntry;
   selected: boolean;
   onToggleSelect: () => void;
+  onPreview?: () => void;
 }
 
-export const FileRow = memo(function FileRow({ file, selected, onToggleSelect }: FileRowProps) {
+export const FileRow = memo(function FileRow({ file, selected, onToggleSelect, onPreview }: FileRowProps) {
   return (
-    <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+    <tr
+      className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+      onClick={(e) => {
+        if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
+        onPreview?.();
+      }}
+      style={{ cursor: onPreview ? 'pointer' : undefined }}
+    >
       <td className="p-2">
         <div className="flex items-center gap-3">
           <input
             type="checkbox"
             checked={selected}
             onChange={onToggleSelect}
+            onClick={(e) => e.stopPropagation()}
             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
           />
           <div

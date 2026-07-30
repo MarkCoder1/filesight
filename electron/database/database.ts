@@ -4,7 +4,7 @@ import path from 'path';
 
 import type { StoredData } from './types';
 
-const DEFAULT_DATA: StoredData = { scans: [], cleanups: [] };
+const DEFAULT_DATA: StoredData = { scans: [], cleanups: [], organizations: [] };
 
 let customDbPath: string | null = null;
 let cachedData: StoredData | null = null;
@@ -30,7 +30,7 @@ export async function loadDatabase(): Promise<StoredData> {
     cachedData = JSON.parse(raw) as StoredData;
     return cachedData;
   } catch {
-    cachedData = { scans: [], cleanups: [] };
+    cachedData = { scans: [], cleanups: [], organizations: [] };
     return cachedData;
   }
 }
@@ -52,12 +52,12 @@ export async function saveDatabase(): Promise<void> {
 
 export function getData(): StoredData {
   if (!cachedData) {
-    cachedData = { scans: [], cleanups: [] };
+    cachedData = { scans: [], cleanups: [], organizations: [] };
   }
   return cachedData;
 }
 
 export async function resetDatabase(): Promise<void> {
-  cachedData = { scans: [], cleanups: [] };
+  cachedData = { scans: [], cleanups: [], organizations: [] };
   await saveDatabase();
 }

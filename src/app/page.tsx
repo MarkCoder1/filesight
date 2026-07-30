@@ -36,19 +36,18 @@ export default function HomePage() {
     }
   }, [settingsLoaded, settings.hasCompletedOnboarding]);
 
-  const handleScanFolder = useCallback(async (dirPath: string) => {
+  const runScan = useCallback(async (dirPath: string) => {
     reset();
-    setSelectedFolder(null);
     const result = await scan(dirPath);
     if (result) {
       setLastResult(result);
     }
   }, [reset, scan, setLastResult]);
 
-  const handleScanDownloads = useCallback(() => {
-    const downloadsPath = `${homeDirRef.current}/Downloads`;
-    handleScanFolder(downloadsPath);
-  }, [handleScanFolder]);
+  const handleScan = useCallback(() => {
+    const target = selectedFolder || `${homeDirRef.current}/Downloads`;
+    runScan(target);
+  }, [selectedFolder, runScan]);
 
   const handleChooseFolder = useCallback(async () => {
     const folder = await selectFolder();
@@ -57,20 +56,10 @@ export default function HomePage() {
     }
   }, [selectFolder]);
 
-  const handleScanSelectedFolder = useCallback(async () => {
-    if (selectedFolder) {
-      handleScanFolder(selectedFolder);
-    }
-  }, [selectedFolder, handleScanFolder]);
-
   const handleRetry = useCallback(() => {
-    if (selectedFolder) {
-      handleScanFolder(selectedFolder);
-    } else {
-      const downloadsPath = `${homeDirRef.current}/Downloads`;
-      handleScanFolder(downloadsPath);
-    }
-  }, [selectedFolder, handleScanFolder]);
+    const target = selectedFolder || `${homeDirRef.current}/Downloads`;
+    runScan(target);
+  }, [selectedFolder, runScan]);
 
   const handleViewDashboard = () => {
     router.push('/dashboard');
@@ -89,8 +78,8 @@ export default function HomePage() {
 
       <div className="flex flex-col">
         <HeroSection
-          onScanDownloads={handleScanDownloads}
-          onChooseFolder={selectedFolder ? handleScanSelectedFolder : handleChooseFolder}
+          onScan={handleScan}
+          onChooseFolder={handleChooseFolder}
           isScanning={
             state.status === 'counting' || state.status === 'scanning'
           }

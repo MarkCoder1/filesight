@@ -48,3 +48,20 @@ export function truncatePath(path: string, maxLength: number = 40): string {
 export function pluralize(count: number, singular: string, plural?: string): string {
   return count === 1 ? singular : plural ?? `${singular}s`;
 }
+
+export function base64ToBlobUrl(base64: string, mime: string): string {
+  const byteCharacters = atob(base64);
+  const parts: ArrayBuffer[] = [];
+  const sliceSize = 512;
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+    const buf = new ArrayBuffer(slice.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < slice.length; i++) {
+      view[i] = slice.charCodeAt(i);
+    }
+    parts.push(buf);
+  }
+  const blob = new Blob(parts, { type: mime });
+  return URL.createObjectURL(blob);
+}

@@ -1,19 +1,22 @@
 'use client';
 
-import { ArrowLeft, BarChart3, FileWarning, HardDrive, History, Layers, Trash2 } from 'lucide-react';
+import { ArrowLeft, BarChart3, FileWarning, FolderTree, HardDrive, History, Layers, Trash2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 
 import { CategoryTrendChart } from '@/components/history/CategoryTrendChart';
 import { CleanupHistoryCard } from '@/components/history/CleanupHistoryCard';
 import { HistoryTimeline } from '@/components/history/HistoryTimeline';
+import { OrganizationHistoryCard } from '@/components/history/OrganizationHistoryCard';
 import { ScanComparison } from '@/components/history/ScanComparison';
 import { StorageTrendChart } from '@/components/history/StorageTrendChart';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useHistory } from '@/hooks/use-history';
+import { useOrganization } from '@/hooks/use-organization';
 import { formatBytes } from '@/lib/utils';
+import type { OrgUndoRecord } from '@/types';
 
 const CATEGORY_COLORS: Record<string, string> = {
   images: '#3b82f6',
@@ -48,6 +51,8 @@ export function HistoryContent() {
     fetchTotalRecovered,
   } = useHistory();
 
+  const { history: orgHistory, fetchHistory: fetchOrgHistory, undo: undoOrgMoves } = useOrganization();
+
   useEffect(() => {
     if (detailId) {
       fetchScanDetail(detailId);
@@ -55,8 +60,9 @@ export function HistoryContent() {
       fetchScans();
       fetchLatestCleanup();
       fetchTotalRecovered();
+      fetchOrgHistory();
     }
-  }, [detailId, fetchScans, fetchScanDetail, fetchLatestCleanup, fetchTotalRecovered]);
+  }, [detailId, fetchScans, fetchScanDetail, fetchLatestCleanup, fetchTotalRecovered, fetchOrgHistory]);
 
   useEffect(() => {
     if (compareId && detailId && compareId !== detailId) {
@@ -71,6 +77,13 @@ export function HistoryContent() {
   const goBack = useCallback(() => {
     router.push('/history');
   }, [router]);
+
+  const handleOrgUndo = useCallback(
+    async (record: OrgUndoRecord) => {
+      await undoOrgMoves(record.id, record.moves);
+    },
+    [undoOrgMoves],
+  );
 
   if (detailId && selectedScan) {
     return (
@@ -318,6 +331,25 @@ export function HistoryContent() {
           ) : (
             <p className="text-xs text-muted-foreground">No cleanup activity yet.</p>
           )}
+        </div>
+        <div>
+          <div className="mb-3 flex items-center gap-2">
+            <FolderTree className="h-4 w-4 text-muted-foreground" />
+            <h2 className="text-sm font-medium">Organization History</h2>
+          </div>
+          <div className="space-y-2">
+            {orgHistory.length > 0 ? (
+              orgHistory.map((record) => (
+                <OrganizationHistoryCard
+                  key={record.id}
+                  record={record}
+                  onUndo={handleOrgUndo}
+                />
+              ))
+            ) : (
+              <p className="text-xs text-muted-foreground">No organization activity yet.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

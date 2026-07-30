@@ -11,6 +11,7 @@ import { CleanupHistoryCard } from '@/components/history/CleanupHistoryCard';
 import { CategoryBreakdown } from '@/components/dashboard/category-breakdown';
 import { DuplicateProgress } from '@/components/duplicates/DuplicateProgress';
 import { FileExplorer } from '@/components/explorer/FileExplorer';
+import { OrganizationAssistant } from '@/components/organization/OrganizationAssistant';
 import { CategoryChart } from '@/components/insights/CategoryChart';
 import { LargestFilesCard } from '@/components/insights/LargestFilesCard';
 import { OldFilesCard } from '@/components/insights/OldFilesCard';
@@ -94,6 +95,10 @@ export default function DashboardPage() {
           <TabsTrigger value="insights" className="gap-2">
             <Lightbulb className="h-4 w-4" />
             Insights
+          </TabsTrigger>
+          <TabsTrigger value="organize" className="gap-2">
+            <FolderTree className="h-4 w-4" />
+            Organize
           </TabsTrigger>
           <TabsTrigger value="files" className="gap-2">
             <List className="h-4 w-4" />
@@ -308,6 +313,10 @@ export default function DashboardPage() {
               No analysis results yet. Scan a folder first.
             </p>
           )}
+        </TabsContent>
+
+        <TabsContent value="organize" className="space-y-6">
+          <OrganizationAssistant files={lastResult.files} folderPath={lastResult.path} />
         </TabsContent>
 
         <TabsContent value="files" className="space-y-6">

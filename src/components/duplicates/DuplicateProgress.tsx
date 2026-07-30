@@ -1,6 +1,6 @@
 'use client';
 
-import { Copy, Fingerprint, Hash, ImageIcon } from 'lucide-react';
+import { Copy, FileText, Fingerprint, Hash, ImageIcon, Monitor, Sparkles } from 'lucide-react';
 
 import type { ScanStage } from '@/types';
 
@@ -17,6 +17,9 @@ const stageConfig: Record<ScanStage, { label: string; icon: typeof Copy }> = {
   filename: { label: 'Comparing filenames...', icon: Fingerprint },
   hashing: { label: 'Computing file hashes...', icon: Hash },
   perceptual: { label: 'Comparing images...', icon: ImageIcon },
+  document: { label: 'Comparing documents...', icon: FileText },
+  video: { label: 'Comparing videos...', icon: Monitor },
+  recommending: { label: 'Computing recommendations...', icon: Sparkles },
 };
 
 export function DuplicateProgress({

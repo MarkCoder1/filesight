@@ -33,7 +33,18 @@ export interface CleanupRecord {
   files: string[];
 }
 
+export interface OrgUndoRecord {
+  id: string;
+  date: string;
+  planId: string;
+  label: string;
+  moves: Array<{ originalPath: string; newPath: string }>;
+  totalFiles: number;
+  totalSize: number;
+}
+
 export interface StoredData {
   scans: ScanRecord[];
   cleanups: CleanupRecord[];
+  organizations: OrgUndoRecord[];
 }

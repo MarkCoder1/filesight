@@ -22,6 +22,13 @@ export const IPC_CHANNELS = {
   SETTINGS_UPDATE: 'settings:update',
   SETTINGS_RESET: 'settings:reset',
   SETTINGS_SELECT_FOLDER: 'settings:select-folder',
+  READ_TEXT_FILE: 'fs:read-text-file',
+  READ_IMAGE_FILE: 'fs:read-image-file',
+  READ_FILE_CHUNK: 'fs:read-file-chunk',
+  FILE_EXISTS: 'fs:file-exists',
+  OPEN_IN_FOLDER: 'fs:open-in-folder',
+  COPY_TO_CLIPBOARD: 'fs:copy-to-clipboard',
+  FILE_STAT: 'fs:file-stat',
 } as const;
 
 export function getElectronAPI() {

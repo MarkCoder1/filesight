@@ -141,7 +141,7 @@ export interface AnalysisResult {
 
 export type ConfidenceLevel = 'exact' | 'strong' | 'similar';
 
-export type MatchType = 'hash-exact' | 'filename-similar' | 'perceptual';
+export type MatchType = 'hash-exact' | 'filename-similar' | 'perceptual' | 'document-similar' | 'video-similar';
 
 export interface DuplicateFileInfo {
   path: string;
@@ -151,6 +151,9 @@ export interface DuplicateFileInfo {
   hash: string;
   confidence?: ConfidenceLevel;
   matchType?: MatchType;
+  similarity?: number;
+  resolution?: { width: number; height: number } | null;
+  isRecommended?: boolean;
 }
 
 export interface DuplicateGroup {
@@ -161,9 +164,10 @@ export interface DuplicateGroup {
   wastedSpace: number;
   confidence?: ConfidenceLevel;
   matchType?: MatchType;
+  detectionLevel?: 1 | 2 | 3;
 }
 
-export type ScanStage = 'metadata' | 'filename' | 'hashing' | 'perceptual';
+export type ScanStage = 'metadata' | 'filename' | 'hashing' | 'perceptual' | 'document' | 'video' | 'recommending';
 
 export interface DuplicateScanProgress {
   stage?: ScanStage;
@@ -177,6 +181,18 @@ export interface DuplicateScanResult {
   duplicateGroups: DuplicateGroup[];
   totalDuplicates: number;
   wastedSpace: number;
+  categories?: {
+    exact: number;
+    similarImages: number;
+    similarDocuments: number;
+    filename: number;
+  };
+}
+
+export interface DuplicateDeleteResult {
+  successCount: number;
+  failureCount: number;
+  results: Array<{ path: string; name: string; success: boolean; error?: string }>;
 }
 
 export interface ScanHistoryRecord {
@@ -234,6 +250,87 @@ export interface ScanComparison {
   categoryChanges: { category: string; countDiff: number; sizeDiff: number }[];
 }
 
+export type PreviewType = 'image' | 'text' | 'pdf' | 'audio' | 'video' | 'unsupported';
+
+export interface ReadTextFileResult {
+  content: string;
+  truncated: boolean;
+}
+
+export interface ReadFileBase64Result {
+  data: string | null;
+  mime: string;
+  tooLarge: boolean;
+  size: number;
+}
+
+export interface FileStat {
+  size: number;
+  modifiedAt: string;
+  createdAt: string;
+  isDirectory: boolean;
+  isFile: boolean;
+}
+
+export type OrgCategory = 'images' | 'documents' | 'videos' | 'audio' | 'archives' | 'installers' | 'unknown';
+
+export interface OrgCategoryInfo {
+  category: OrgCategory;
+  label: string;
+  files: Array<{ path: string; name: string; size: number }>;
+  fileCount: number;
+  totalSize: number;
+  suggestedPath: string;
+}
+
+export interface OrgPlan {
+  id: string;
+  sourceFolder: string;
+  categories: OrgCategoryInfo[];
+  totalFiles: number;
+  totalSize: number;
+  createdAt: string;
+}
+
+export interface OrgFileMove {
+  id: string;
+  originalPath: string;
+  newPath: string;
+  fileName: string;
+  category: OrgCategory;
+  size: number;
+  status: 'pending' | 'moved' | 'skipped' | 'conflict';
+  resolvedPath?: string;
+}
+
+export interface OrgMoveResult {
+  successCount: number;
+  skipCount: number;
+  conflictCount: number;
+  totalSize: number;
+  moves: OrgFileMove[];
+}
+
+export interface OrgUndoRecord {
+  id: string;
+  date: string;
+  planId: string;
+  label: string;
+  moves: Array<{ originalPath: string; newPath: string }>;
+  totalFiles: number;
+  totalSize: number;
+}
+
+export function getPreviewType(extension: string): PreviewType {
+  const ext = extension.toLowerCase();
+  if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'ico'].includes(ext)) return 'image';
+  if (['txt', 'md', 'json', 'js', 'ts', 'jsx', 'tsx', 'html', 'css', 'xml', 'csv', 'log'].includes(ext)) return 'text';
+  if (ext === 'pdf') return 'pdf';
+  if (['mp3', 'wav', 'ogg', 'm4a'].includes(ext)) return 'audio';
+  if (['mp4', 'mov', 'webm', 'avi', 'mkv'].includes(ext)) return 'video';
+  return 'unsupported';
+}
+
 export interface ElectronAPI {
   startScan: (dirPath: string) => Promise<ScanResult>;
   onScanProgress: (callback: (progress: ScanProgress) => void) => () => void;
@@ -245,6 +342,9 @@ export interface ElectronAPI {
   findDuplicates: (files: { path: string; name: string; size: number; modifiedAt: Date }[]) => Promise<DuplicateScanResult>;
   cancelDuplicateScan: () => void;
   onDuplicateProgress: (callback: (progress: DuplicateScanProgress) => void) => () => void;
+  deleteDuplicates: (files: { path: string; name: string }[], totalSize: number) => Promise<DuplicateDeleteResult>;
+  onDuplicateDeleteProgress: (callback: (progress: { current: number; total: number; currentFile: string }) => void) => () => void;
+  recommendDuplicates: (files: Array<{ path: string; name: string; size: number; modifiedAt: Date; resolution?: { width: number; height: number }; matchType?: string }>) => Promise<{ path: string } | null>;
   getScanHistory: (limit?: number, offset?: number) => Promise<{ scans: ScanHistoryRecord[]; total: number }>;
   getScanDetail: (id: string) => Promise<ScanHistoryRecord | null>;
   getLatestScan: () => Promise<ScanHistoryRecord | null>;
@@ -260,4 +360,17 @@ export interface ElectronAPI {
   resetSettings: () => Promise<UserSettings>;
   selectFolder: () => Promise<string | null>;
   resetHistory: () => Promise<void>;
+
+  readTextFile: (path: string) => Promise<ReadTextFileResult>;
+  readImageFile: (path: string) => Promise<string>;
+  readFileBase64: (path: string) => Promise<ReadFileBase64Result>;
+  fileExists: (path: string) => Promise<boolean>;
+  openInFolder: (path: string) => Promise<void>;
+  copyToClipboard: (text: string) => Promise<void>;
+  fileStat: (path: string) => Promise<FileStat>;
+
+  generateOrgPlan: (files: Array<{ path: string; name: string; size: number; extension: string }>, sourceFolder: string) => Promise<OrgPlan>;
+  executeOrgMoves: (operations: Array<{ id: string; originalPath: string; newPath: string; fileName: string; size: number; category: string }>) => Promise<OrgMoveResult>;
+  getOrgHistory: () => Promise<OrgUndoRecord[]>;
+  undoOrgMoves: (recordId: string, moves: Array<{ originalPath: string; newPath: string }>) => Promise<{ undoneCount: number; failedCount: number }>;
 }

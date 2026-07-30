@@ -1,12 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { CleanupDialog } from '@/components/cleanup/CleanupDialog';
 import { CleanupProgress } from '@/components/cleanup/CleanupProgress';
 import { CleanupResult } from '@/components/cleanup/CleanupResult';
 import { SelectedFilesBar } from '@/components/cleanup/SelectedFilesBar';
+import { PreviewPanel } from '@/components/preview/PreviewPanel';
 import { useCleanup } from '@/hooks/use-cleanup';
 import { filterFiles } from '@/lib/fileFiltering';
 import { searchFiles } from '@/lib/fileSearch';
@@ -26,6 +27,8 @@ interface FileExplorerProps {
 }
 
 export function FileExplorer({ files, onGoHome }: FileExplorerProps) {
+  const [previewFile, setPreviewFile] = useState<FileEntry | null>(null);
+
   const {
     searchQuery,
     activeFilters,
@@ -108,11 +111,19 @@ export function FileExplorer({ files, onGoHome }: FileExplorerProps) {
     clearSelection();
   }, [cleanup, clearSelection]);
 
+  const handlePreview = useCallback((file: FileEntry) => {
+    setPreviewFile(file);
+  }, []);
+
+  const handleClosePreview = useCallback(() => {
+    setPreviewFile(null);
+  }, []);
+
   if (files.length === 0) {
     return <EmptyResults type="no-data" actionLabel="Scan folder" onAction={onGoHome} />;
   }
 
-  return (
+  const listContent = (
     <div className="space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <div className="flex-1">
@@ -139,6 +150,7 @@ export function FileExplorer({ files, onGoHome }: FileExplorerProps) {
         onToggleSelect={toggleFileSelection}
         onSelectAll={selectAll}
         onClearSelection={clearSelection}
+        onPreview={handlePreview}
       />
 
       {selectedFiles.size > 0 && !cleanup.isPreview && !cleanup.isInProgress && (
@@ -182,6 +194,19 @@ export function FileExplorer({ files, onGoHome }: FileExplorerProps) {
           <button onClick={cleanup.reset} className="ml-2 underline">
             Dismiss
           </button>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="flex h-full gap-4">
+      <div className={previewFile ? 'flex-1 min-w-0' : 'w-full'}>
+        {listContent}
+      </div>
+      {previewFile && (
+        <div className="w-[420px] shrink-0 border-l">
+          <PreviewPanel file={previewFile} onClose={handleClosePreview} />
         </div>
       )}
     </div>

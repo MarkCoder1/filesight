@@ -1,0 +1,79 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+
+import { Skeleton } from '@/components/ui/skeleton';
+import { useIpc } from '@/hooks/use-ipc';
+import { base64ToBlobUrl, formatBytes } from '@/lib/utils';
+
+interface AudioPreviewProps {
+  filePath: string;
+}
+
+export function AudioPreview({ filePath }: AudioPreviewProps) {
+  const { readFileBase64 } = useIpc();
+  const [url, setUrl] = useState<string | null>(null);
+  const [tooLarge, setTooLarge] = useState(false);
+  const [size, setSize] = useState(0);
+  const [error, setError] = useState(false);
+  const urlRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    readFileBase64(filePath)
+      .then((result) => {
+        if (cancelled) return;
+        if (result.tooLarge) {
+          setTooLarge(true);
+          setSize(result.size);
+          return;
+        }
+        if (!result.data) {
+          setError(true);
+          return;
+        }
+        const blobUrl = base64ToBlobUrl(result.data, result.mime);
+        urlRef.current = blobUrl;
+        setUrl(blobUrl);
+      })
+      .catch(() => {
+        if (!cancelled) setError(true);
+      });
+    return () => {
+      cancelled = true;
+      if (urlRef.current) {
+        URL.revokeObjectURL(urlRef.current);
+      }
+    };
+  }, [filePath, readFileBase64]);
+
+  if (error) {
+    return (
+      <div className="flex h-16 items-center justify-center rounded-lg bg-muted">
+        <p className="text-sm text-muted-foreground">Unable to load audio</p>
+      </div>
+    );
+  }
+
+  if (tooLarge) {
+    return (
+      <div className="flex h-16 items-center justify-center rounded-lg bg-muted">
+        <p className="text-sm text-muted-foreground">
+          Audio too large to preview ({formatBytes(size)}). Open file externally.
+        </p>
+      </div>
+    );
+  }
+
+  if (!url) {
+    return <Skeleton className="h-16 w-full rounded-lg" />;
+  }
+
+  return (
+    <div className="flex items-center justify-center rounded-lg bg-muted p-4">
+      <audio controls className="w-full max-w-md" preload="metadata">
+        <source src={url} />
+      </audio>
+    </div>
+  );
+}

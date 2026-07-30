@@ -51,6 +51,20 @@ const electronAPI = {
     };
   },
 
+  deleteDuplicates: (files: { path: string; name: string }[], totalSize: number) =>
+    ipcRenderer.invoke('duplicates:delete', { files, totalSize }),
+
+  onDuplicateDeleteProgress: (callback: (progress: unknown) => void) => {
+    const handler = (_event: unknown, progress: unknown) => callback(progress);
+    ipcRenderer.on('duplicates:delete-progress', handler);
+    return () => {
+      ipcRenderer.removeListener('duplicates:delete-progress', handler);
+    };
+  },
+
+  recommendDuplicates: (files: { path: string; name: string; size: number; modifiedAt: Date; resolution?: { width: number; height: number }; matchType?: string }[]) =>
+    ipcRenderer.invoke('duplicates:recommend', { files }),
+
   getScanHistory: (limit?: number, offset?: number) =>
     ipcRenderer.invoke('history:get-scans', { limit, offset }),
 
@@ -95,6 +109,44 @@ const electronAPI = {
 
   resetHistory: () =>
     ipcRenderer.invoke('history:reset'),
+
+  readTextFile: (filePath: string) =>
+    ipcRenderer.invoke('fs:read-text-file', { path: filePath }),
+
+  readImageFile: (filePath: string) =>
+    ipcRenderer.invoke('fs:read-image-file', { path: filePath }),
+
+  readFileBase64: (filePath: string) =>
+    ipcRenderer.invoke('fs:read-file-base64', { path: filePath }),
+
+  fileExists: (filePath: string) =>
+    ipcRenderer.invoke('fs:file-exists', { path: filePath }),
+
+  openInFolder: (filePath: string) =>
+    ipcRenderer.invoke('fs:open-in-folder', { path: filePath }),
+
+  copyToClipboard: (text: string) =>
+    ipcRenderer.invoke('fs:copy-to-clipboard', { text }),
+
+  fileStat: (filePath: string) =>
+    ipcRenderer.invoke('fs:file-stat', { path: filePath }),
+
+  generateOrgPlan: (
+    files: { path: string; name: string; size: number; extension: string }[],
+    sourceFolder: string,
+  ) => ipcRenderer.invoke('org:generate-plan', { files, sourceFolder }),
+
+  executeOrgMoves: (
+    operations: { id: string; originalPath: string; newPath: string; fileName: string; size: number; category: string }[],
+  ) => ipcRenderer.invoke('org:execute-moves', { operations }),
+
+  getOrgHistory: () =>
+    ipcRenderer.invoke('org:get-history'),
+
+  undoOrgMoves: (
+    recordId: string,
+    moves: { originalPath: string; newPath: string }[],
+  ) => ipcRenderer.invoke('org:undo-moves', { recordId, moves }),
 };
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI);

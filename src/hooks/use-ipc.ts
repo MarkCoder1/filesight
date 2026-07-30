@@ -108,6 +108,30 @@ export function useIpc() {
     api?.cancelDuplicateScan();
   }, [api]);
 
+  const deleteDuplicates = useCallback(
+    async (files: { path: string; name: string }[], totalSize: number) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.deleteDuplicates(files, totalSize);
+    },
+    [api],
+  );
+
+  const onDuplicateDeleteProgress = useCallback(
+    (callback: (progress: { current: number; total: number; currentFile: string }) => void) => {
+      if (!api) return () => {};
+      return api.onDuplicateDeleteProgress(callback);
+    },
+    [api],
+  );
+
+  const recommendDuplicates = useCallback(
+    async (files: Array<{ path: string; name: string; size: number; modifiedAt: Date; resolution?: { width: number; height: number }; matchType?: string }>) => {
+      if (!api) return null;
+      return api.recommendDuplicates(files);
+    },
+    [api],
+  );
+
   const onDuplicateProgress = useCallback(
     (callback: (progress: DuplicateScanProgress) => void) => {
       if (!api) return () => {};
@@ -175,6 +199,91 @@ export function useIpc() {
     return api.resetHistory();
   }, [api]);
 
+  const readTextFile = useCallback(
+    async (path: string) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.readTextFile(path);
+    },
+    [api],
+  );
+
+  const readImageFile = useCallback(
+    async (path: string) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.readImageFile(path);
+    },
+    [api],
+  );
+
+  const readFileBase64 = useCallback(
+    async (path: string) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.readFileBase64(path);
+    },
+    [api],
+  );
+
+  const fileExists = useCallback(
+    async (path: string) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.fileExists(path);
+    },
+    [api],
+  );
+
+  const openInFolder = useCallback(
+    async (path: string) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.openInFolder(path);
+    },
+    [api],
+  );
+
+  const copyToClipboard = useCallback(
+    async (text: string) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.copyToClipboard(text);
+    },
+    [api],
+  );
+
+  const fileStat = useCallback(
+    async (path: string) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.fileStat(path);
+    },
+    [api],
+  );
+
+  const generateOrgPlan = useCallback(
+    async (files: Array<{ path: string; name: string; size: number; extension: string }>, sourceFolder: string) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.generateOrgPlan(files, sourceFolder);
+    },
+    [api],
+  );
+
+  const executeOrgMoves = useCallback(
+    async (operations: Array<{ id: string; originalPath: string; newPath: string; fileName: string; size: number; category: string }>) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.executeOrgMoves(operations);
+    },
+    [api],
+  );
+
+  const getOrgHistory = useCallback(async () => {
+    if (!api) throw new Error('Electron API not available');
+    return api.getOrgHistory();
+  }, [api]);
+
+  const undoOrgMoves = useCallback(
+    async (recordId: string, moves: Array<{ originalPath: string; newPath: string }>) => {
+      if (!api) throw new Error('Electron API not available');
+      return api.undoOrgMoves(recordId, moves);
+    },
+    [api],
+  );
+
   const compareScans = useCallback(
     async (scanId1: string, scanId2: string) => {
       if (!api) throw new Error('Electron API not available');
@@ -210,6 +319,20 @@ export function useIpc() {
       resetSettings,
       selectFolder,
       resetHistory,
+      readTextFile,
+      readImageFile,
+      readFileBase64,
+      fileExists,
+      openInFolder,
+      copyToClipboard,
+      fileStat,
+      generateOrgPlan,
+      executeOrgMoves,
+      getOrgHistory,
+      undoOrgMoves,
+      deleteDuplicates,
+      onDuplicateDeleteProgress,
+      recommendDuplicates,
       isAvailable: !!api,
     }),
     [
@@ -219,6 +342,9 @@ export function useIpc() {
       runAnalysis,
       findDuplicates,
       cancelDuplicateScan,
+      deleteDuplicates,
+      onDuplicateDeleteProgress,
+      recommendDuplicates,
       onDuplicateProgress,
       getScanHistory,
       getScanDetail,
@@ -238,6 +364,17 @@ export function useIpc() {
       resetSettings,
       selectFolder,
       resetHistory,
+      readTextFile,
+      readImageFile,
+      readFileBase64,
+      fileExists,
+      openInFolder,
+      copyToClipboard,
+      fileStat,
+      generateOrgPlan,
+      executeOrgMoves,
+      getOrgHistory,
+      undoOrgMoves,
       api,
     ],
   );

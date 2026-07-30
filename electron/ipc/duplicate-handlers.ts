@@ -1,6 +1,7 @@
 import { ipcMain, type IpcMainInvokeEvent } from 'electron';
 
-import { buildScanResult, scanDuplicates } from '../duplicate-engine';
+import { scanDuplicates } from '../services/duplicateFinder/duplicateEngine';
+import { recommendBestFile, saveDuplicateCleanupRecord, trashDuplicateFiles } from '../services/duplicateFinder/cleanupManager';
 
 let currentAbortController: AbortController | null = null;
 
@@ -9,11 +10,7 @@ export function registerDuplicateHandlers(): void {
     'duplicates:start',
     async (
       event: IpcMainInvokeEvent,
-      {
-        files,
-      }: {
-        files: { path: string; name: string; size: number; modifiedAt: Date }[];
-      },
+      { files }: { files: { path: string; name: string; size: number; modifiedAt: Date }[] },
     ) => {
       if (currentAbortController) {
         currentAbortController.abort();
@@ -29,7 +26,7 @@ export function registerDuplicateHandlers(): void {
       ipcMain.on('duplicates:cancel', onCancel);
 
       try {
-        const groups = await scanDuplicates(files, (progress) => {
+        const result = await scanDuplicates(files, (progress) => {
           event.sender.send('duplicates:progress', progress);
         }, abortController.signal);
 
@@ -37,7 +34,7 @@ export function registerDuplicateHandlers(): void {
           currentAbortController = null;
         }
         ipcMain.removeListener('duplicates:cancel', onCancel);
-        return buildScanResult(groups);
+        return result;
       } catch (err) {
         if (currentAbortController === abortController) {
           currentAbortController = null;
@@ -46,6 +43,38 @@ export function registerDuplicateHandlers(): void {
         const message = err instanceof Error ? err.message : 'Duplicate scan failed';
         throw new Error(message);
       }
+    },
+  );
+
+  ipcMain.handle(
+    'duplicates:delete',
+    async (
+      event: IpcMainInvokeEvent,
+      { files, totalSize }: { files: { path: string; name: string }[]; totalSize: number },
+    ) => {
+      const result = await trashDuplicateFiles(files, (current, total, currentFile) => {
+        event.sender.send('duplicates:delete-progress', { current, total, currentFile });
+      });
+
+      if (result.successCount > 0) {
+        await saveDuplicateCleanupRecord({
+          files: files.map((f) => ({ ...f, size: totalSize / files.length })),
+          successCount: result.successCount,
+          totalSize,
+        });
+      }
+
+      return result;
+    },
+  );
+
+  ipcMain.handle(
+    'duplicates:recommend',
+    async (_event, { files }: { files: Array<{
+      path: string; name: string; size: number; modifiedAt: Date;
+      resolution?: { width: number; height: number }; matchType?: string;
+    }> }) => {
+      return recommendBestFile(files);
     },
   );
 }

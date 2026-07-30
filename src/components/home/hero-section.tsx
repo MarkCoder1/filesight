@@ -7,18 +7,22 @@ import { Button } from '@/components/ui/button';
 import { APP_NAME, APP_TAGLINE } from '@/lib/constants';
 
 interface HeroSectionProps {
-  onScanDownloads?: () => void;
+  onScan?: () => void;
   onChooseFolder?: () => void;
   isScanning?: boolean;
   selectedFolder?: string | null;
 }
 
 export function HeroSection({
-  onScanDownloads,
+  onScan,
   onChooseFolder,
   isScanning = false,
   selectedFolder,
 }: HeroSectionProps) {
+  const scanLabel = selectedFolder
+    ? `Scan "${selectedFolder.split('/').pop()}"`
+    : 'Scan Downloads';
+
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/20">
@@ -37,7 +41,7 @@ export function HeroSection({
         <Button
           size="xl"
           className="gap-2 shadow-lg shadow-primary/20 hover:cursor-pointer"
-          onClick={onScanDownloads}
+          onClick={onScan}
           disabled={isScanning}
         >
           {isScanning ? (
@@ -45,7 +49,7 @@ export function HeroSection({
           ) : (
             <Download className="h-5 w-5" />
           )}
-          {isScanning ? 'Scanning...' : 'Scan Downloads'}
+          {isScanning ? 'Scanning...' : scanLabel}
         </Button>
         <Button
           size="xl"
@@ -55,7 +59,7 @@ export function HeroSection({
           disabled={isScanning}
         >
           <FolderOpen className="h-5 w-5" />
-          {selectedFolder ? `Scan "${selectedFolder.split('/').pop()}"` : 'Choose Folder'}
+          {selectedFolder ? 'Change Folder' : 'Choose Folder'}
         </Button>
       </div>
 

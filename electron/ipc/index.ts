@@ -3,6 +3,8 @@ import { ipcMain, app, shell } from 'electron';
 import { registerAnalyzeHandlers } from './analyze-handlers';
 import { registerDuplicateHandlers } from './duplicate-handlers';
 import { registerHistoryHandlers } from './history-handlers';
+import { registerOrganizationHandlers } from './organization-handlers';
+import { registerPreviewHandlers } from './preview-handlers';
 import { registerScanHandlers } from './scan-handlers';
 import { registerSettingsHandlers } from './settings-handlers';
 import { registerTrashHandlers } from './trash-handlers';
@@ -13,6 +15,8 @@ export function registerIpcHandlers(): void {
   registerAnalyzeHandlers();
   registerDuplicateHandlers();
   registerHistoryHandlers();
+  registerOrganizationHandlers();
+  registerPreviewHandlers();
   registerSettingsHandlers();
 
   ipcMain.handle('env:home', () => {

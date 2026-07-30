@@ -73,9 +73,7 @@ export function DuplicateCard({ onGoHome }: DuplicateCardProps) {
           groupCount={duplicate.result.duplicateGroups.length}
           totalDuplicates={duplicate.result.totalDuplicates}
           wastedSpace={duplicate.result.wastedSpace}
-          exactCount={duplicate.result.duplicateGroups.filter((g) => g.confidence === 'exact' || !g.confidence).length}
-          strongCount={duplicate.result.duplicateGroups.filter((g) => g.confidence === 'strong').length}
-          similarCount={duplicate.result.duplicateGroups.filter((g) => g.confidence === 'similar').length}
+          categories={duplicate.result.categories}
         />
       )}
 

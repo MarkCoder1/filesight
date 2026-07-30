@@ -24,6 +24,7 @@ interface FileTableProps {
   onToggleSelect: (fileId: string) => void;
   onSelectAll: () => void;
   onClearSelection: () => void;
+  onPreview?: (file: FileEntry) => void;
 }
 
 export function FileTable({
@@ -32,6 +33,7 @@ export function FileTable({
   onToggleSelect,
   onSelectAll,
   onClearSelection,
+  onPreview,
 }: FileTableProps) {
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(files.length / PAGE_SIZE);
@@ -83,6 +85,7 @@ export function FileTable({
               file={file}
               selected={selectedIds.has(file.id)}
               onToggleSelect={() => onToggleSelect(file.id)}
+              onPreview={onPreview ? () => onPreview(file) : undefined}
             />
           ))}
         </TableBody>
