@@ -65,10 +65,6 @@ FileSight gives you a clear picture of your files so you can make informed decis
 2. Run the installer and follow the setup wizard.
 3. Launch FileSight from the Start menu or desktop shortcut.
 
-### Linux
-
-Download the latest `-linux.AppImage` or `.deb` from the [Releases page](https://github.com/anomalyco/filesight/releases).
-
 **AppImage:**
 
 ```bash
