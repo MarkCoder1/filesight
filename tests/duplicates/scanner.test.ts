@@ -4,10 +4,14 @@ import os from 'os';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { buildScanResult } from '../../electron/duplicates/duplicateAnalyzer';
-import { scanDuplicates } from '../../electron/duplicates/duplicateScanner';
-import { calculateFileHash } from '../../electron/duplicates/hashCalculator';
-import type { DuplicateGroup } from '../../electron/duplicates/types';
+import {
+  buildScanResult,
+  scanDuplicates,
+} from '../../electron/duplicate-engine';
+import { areFilenamesSimilar, normalizeFileName } from '../../electron/duplicate-engine/filenameMatcher';
+import { calculateChunkHash, calculateFileHash } from '../../electron/duplicate-engine/hasher';
+import { areImagesSimilar, computeDHash, hammingDistance, isImageFile } from '../../electron/duplicate-engine/imageHash';
+import type { DuplicateGroup } from '../../electron/duplicate-engine/types';
 
 describe('calculateFileHash', () => {
   let testDir: string;
@@ -74,16 +78,165 @@ describe('calculateFileHash', () => {
     await fs.writeFile(filePath, buffer);
 
     const controller = new AbortController();
-
     controller.abort();
 
     await expect(calculateFileHash(filePath, controller.signal)).rejects.toThrow('Aborted');
   });
 });
 
+describe('calculateChunkHash', () => {
+  let testDir: string;
+
+  beforeEach(async () => {
+    testDir = await fs.mkdtemp(path.join(os.tmpdir(), 'chunk-hash-'));
+  });
+
+  afterEach(async () => {
+    await fs.rm(testDir, { recursive: true, force: true });
+  });
+
+  it('returns a hash for a large file', async () => {
+    const filePath = path.join(testDir, 'large.bin');
+    const buffer = Buffer.alloc(60 * 1024 * 1024, 'A');
+    await fs.writeFile(filePath, buffer);
+
+    const result = await calculateChunkHash(filePath);
+
+    expect(result.hash).toBeTruthy();
+    expect(result.hash.length).toBe(64);
+    expect(result.size).toBe(60 * 1024 * 1024);
+  });
+
+  it('falls back to full hash for small files', async () => {
+    const filePath = path.join(testDir, 'small.txt');
+    await fs.writeFile(filePath, 'hello world');
+
+    const chunkResult = await calculateChunkHash(filePath);
+    const fullResult = await calculateFileHash(filePath);
+
+    expect(chunkResult.hash).toBe(fullResult.hash);
+  });
+
+  it('generates same chunk hash for identical large files', async () => {
+    const f1 = path.join(testDir, 'copy1.bin');
+    const f2 = path.join(testDir, 'copy2.bin');
+    const buffer = Buffer.alloc(60 * 1024 * 1024, 'B');
+    await fs.writeFile(f1, buffer);
+    await fs.writeFile(f2, buffer);
+
+    const [r1, r2] = await Promise.all([calculateChunkHash(f1), calculateChunkHash(f2)]);
+
+    expect(r1.hash).toBe(r2.hash);
+  });
+
+  it('supports abort signal', async () => {
+    const filePath = path.join(testDir, 'abort.bin');
+    const buffer = Buffer.alloc(60 * 1024 * 1024, 'C');
+    await fs.writeFile(filePath, buffer);
+
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(calculateChunkHash(filePath, controller.signal)).rejects.toThrow('Aborted');
+  });
+});
+
+describe('normalizeFileName', () => {
+  it('removes "copy" suffix', () => {
+    expect(normalizeFileName('file copy.txt').stem).toBe('file');
+  });
+
+  it('removes "(1)" numbering', () => {
+    expect(normalizeFileName('file (1).txt').stem).toBe('file');
+  });
+
+  it('removes trailing numbers', () => {
+    expect(normalizeFileName('file-2.txt').stem).toBe('file');
+  });
+
+  it('preserves original for clean names', () => {
+    expect(normalizeFileName('document.pdf').stem).toBe('document');
+  });
+
+  it('extracts extension', () => {
+    expect(normalizeFileName('photo.png').extension).toBe('.png');
+  });
+
+  it('handles conflicted copy patterns', () => {
+    expect(normalizeFileName('file (conflicted copy 2024-01-01).txt').stem).toBe('file');
+  });
+});
+
+describe('areFilenamesSimilar', () => {
+  it('detects copy pattern: file.png vs file copy.png', () => {
+    expect(areFilenamesSimilar('file.png', 'file copy.png')).toBe(true);
+  });
+
+  it('detects numbering pattern: document.pdf vs document (1).pdf', () => {
+    expect(areFilenamesSimilar('document.pdf', 'document (1).pdf')).toBe(true);
+  });
+
+  it('detects dash-number pattern: photo.jpg vs photo-2.jpg', () => {
+    expect(areFilenamesSimilar('photo.jpg', 'photo-2.jpg')).toBe(true);
+  });
+
+  it('detects final-copy pattern: report-final.docx vs report-final-copy.docx', () => {
+    expect(areFilenamesSimilar('report-final.docx', 'report-final-copy.docx')).toBe(true);
+  });
+
+  it('returns false for different extensions', () => {
+    expect(areFilenamesSimilar('file.png', 'file.jpg')).toBe(false);
+  });
+
+  it('returns false for completely different names', () => {
+    expect(areFilenamesSimilar('cat.png', 'dog.png')).toBe(false);
+  });
+
+  it('handles exact same names', () => {
+    expect(areFilenamesSimilar('same.txt', 'same.txt')).toBe(true);
+  });
+});
+
+describe('isImageFile', () => {
+  it('recognizes common image extensions', () => {
+    expect(isImageFile('photo.jpg')).toBe(true);
+    expect(isImageFile('photo.jpeg')).toBe(true);
+    expect(isImageFile('photo.png')).toBe(true);
+    expect(isImageFile('photo.gif')).toBe(true);
+    expect(isImageFile('photo.webp')).toBe(true);
+  });
+
+  it('returns false for non-images', () => {
+    expect(isImageFile('document.pdf')).toBe(false);
+    expect(isImageFile('archive.zip')).toBe(false);
+  });
+});
+
+describe('hammingDistance', () => {
+  it('returns 0 for identical hashes', () => {
+    expect(hammingDistance('abc', 'abc')).toBe(0);
+  });
+
+  it('returns correct distance for different hashes', () => {
+    const hash1 = '0000000000000000';
+    const hash2 = 'ffffffffffffffff';
+    expect(hammingDistance(hash1, hash2)).toBe(64);
+  });
+});
+
+describe('areImagesSimilar', () => {
+  it('considers identical hashes similar', () => {
+    expect(areImagesSimilar('abc123', 'abc123')).toBe(true);
+  });
+
+  it('respects custom threshold', () => {
+    expect(areImagesSimilar('0000000000000000', '0000000000000001', 0)).toBe(false);
+    expect(areImagesSimilar('0000000000000000', '0000000000000001', 1)).toBe(true);
+  });
+});
+
 describe('scanDuplicates', () => {
   let testDir: string;
-  const baseFiles: { path: string; name: string; size: number; modifiedAt: Date }[] = [];
 
   async function makeFile(name: string, content: string) {
     const filePath = path.join(testDir, name);
@@ -115,6 +268,8 @@ describe('scanDuplicates', () => {
     expect(result).toHaveLength(1);
     expect(result[0].files).toHaveLength(2);
     expect(result[0].wastedSpace).toBe(f1.size);
+    expect(result[0].confidence).toBe('exact');
+    expect(result[0].matchType).toBe('hash-exact');
   });
 
   it('returns empty array when no duplicates exist', async () => {
@@ -202,6 +357,51 @@ describe('scanDuplicates', () => {
 
     expect(result[0].wastedSpace).toBeGreaterThanOrEqual(result[1]?.wastedSpace ?? 0);
   });
+
+  it('detects filename-based duplicates: file.png vs file copy.png', async () => {
+    const content = 'A'.repeat(1000);
+    const f1 = await makeFile('logo.png', content);
+    const f2 = await makeFile('logo copy.png', content);
+
+    const result = await scanDuplicates([f1, f2]);
+
+    expect(result.length).toBeGreaterThanOrEqual(1);
+    if (result.length > 0) {
+      expect(result[0].files.length).toBe(2);
+    }
+  });
+
+  it('detects filename-based duplicates: document.pdf vs document (1).pdf', async () => {
+    const content = 'B'.repeat(1000);
+    const f1 = await makeFile('document.pdf', content);
+    const f2 = await makeFile('document (1).pdf', content);
+
+    const result = await scanDuplicates([f1, f2]);
+
+    expect(result.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('does NOT flag same-name different-content as duplicate', async () => {
+    const f1 = await makeFile('same.txt', 'content A');
+    const f2 = await makeFile('same copy.txt', 'different content');
+
+    const result = await scanDuplicates([f1, f2]);
+
+    expect(result).toEqual([]);
+  });
+
+  it('reports stage in progress', async () => {
+    const f1 = await makeFile('a.txt', 'content');
+    const f2 = await makeFile('b.txt', 'content');
+    const onProgress = vi.fn();
+
+    await scanDuplicates([f1, f2], onProgress);
+
+    const stages = onProgress.mock.calls.map((c: unknown[]) => (c[0] as { stage: string }).stage);
+    expect(stages).toContain('metadata');
+    expect(stages).toContain('filename');
+    expect(stages).toContain('hashing');
+  });
 });
 
 describe('buildScanResult', () => {
@@ -211,22 +411,26 @@ describe('buildScanResult', () => {
         id: 'dup-0',
         hash: 'abc',
         files: [
-          { path: '/a.txt', name: 'a.txt', size: 100, modifiedAt: new Date(), hash: 'abc' },
-          { path: '/b.txt', name: 'b.txt', size: 100, modifiedAt: new Date(), hash: 'abc' },
+          { path: '/a.txt', name: 'a.txt', size: 100, modifiedAt: new Date(), hash: 'abc', confidence: 'exact', matchType: 'hash-exact' },
+          { path: '/b.txt', name: 'b.txt', size: 100, modifiedAt: new Date(), hash: 'abc', confidence: 'exact', matchType: 'hash-exact' },
         ],
         totalSize: 200,
         wastedSpace: 100,
+        confidence: 'exact',
+        matchType: 'hash-exact',
       },
       {
         id: 'dup-1',
         hash: 'def',
         files: [
-          { path: '/c.txt', name: 'c.txt', size: 50, modifiedAt: new Date(), hash: 'def' },
-          { path: '/d.txt', name: 'd.txt', size: 50, modifiedAt: new Date(), hash: 'def' },
-          { path: '/e.txt', name: 'e.txt', size: 50, modifiedAt: new Date(), hash: 'def' },
+          { path: '/c.txt', name: 'c.txt', size: 50, modifiedAt: new Date(), hash: 'def', confidence: 'exact', matchType: 'hash-exact' },
+          { path: '/d.txt', name: 'd.txt', size: 50, modifiedAt: new Date(), hash: 'def', confidence: 'exact', matchType: 'hash-exact' },
+          { path: '/e.txt', name: 'e.txt', size: 50, modifiedAt: new Date(), hash: 'def', confidence: 'exact', matchType: 'hash-exact' },
         ],
         totalSize: 150,
         wastedSpace: 100,
+        confidence: 'exact',
+        matchType: 'hash-exact',
       },
     ];
 

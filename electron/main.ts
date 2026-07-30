@@ -17,6 +17,7 @@ function createWindow(): void {
     minWidth: 900,
     minHeight: 600,
     title: 'FileSight',
+    icon: path.join(__dirname, '../assets/icons/filesight.png'),
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 16, y: 16 },
     webPreferences: {

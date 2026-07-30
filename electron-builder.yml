@@ -23,7 +23,7 @@ mac:
         - x64
         - arm64
   artifactName: FileSight-${version}-mac-${arch}.${ext}
-  icon: resources/filesight.svg
+  icon: assets/icons/filesight.icns
   hardenedRuntime: true
   gatekeeperAssess: false
   notarize: false
@@ -42,7 +42,7 @@ win:
       arch:
         - x64
   artifactName: FileSight-${version}-win-x64.${ext}
-  icon: resources/filesight.svg
+  icon: assets/icons/filesight.ico
 
 linux:
   target:
@@ -57,7 +57,7 @@ linux:
         - x64
   artifactName: FileSight-${version}-linux-x64.${ext}
   category: Utility
-  icon: resources/
+  icon: assets/icons/filesight.png
   desktop:
     Name: FileSight
     Comment: Understand your files. Reclaim your space.

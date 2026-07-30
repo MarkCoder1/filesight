@@ -1,7 +1,6 @@
 import { ipcMain, type IpcMainInvokeEvent } from 'electron';
 
-import { buildScanResult } from '../duplicates/duplicateAnalyzer';
-import { scanDuplicates } from '../duplicates/duplicateScanner';
+import { buildScanResult, scanDuplicates } from '../duplicate-engine';
 
 let currentAbortController: AbortController | null = null;
 

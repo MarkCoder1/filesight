@@ -10,7 +10,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { formatBytes } from '@/lib/utils';
-import type { DuplicateGroup } from '@/types';
+import type { ConfidenceLevel, DuplicateGroup } from '@/types';
 
 import { FileSelectionList } from './FileSelectionList';
 
@@ -25,6 +25,12 @@ interface DuplicateGroupProps {
   };
 }
 
+const confidenceColors: Record<ConfidenceLevel, { bg: string; text: string; label: string }> = {
+  exact: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-600 dark:text-red-400', label: 'Exact' },
+  strong: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-400', label: 'Strong' },
+  similar: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-600 dark:text-blue-400', label: 'Similar' },
+};
+
 export function DuplicateGroupCard({
   group,
   selectedFilePaths,
@@ -36,6 +42,8 @@ export function DuplicateGroupCard({
   const [isOpen, setIsOpen] = useState(false);
   const file0 = group.files[0];
   const allSelected = group.files.every((f) => selectedFilePaths.has(f.path));
+  const confidence = group.confidence || 'exact';
+  const colors = confidenceColors[confidence];
 
   return (
     <div className="rounded-lg border">
@@ -43,13 +51,18 @@ export function DuplicateGroupCard({
         <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted/50">
           <CollapsibleTrigger asChild>
             <button className="flex flex-1 items-center gap-3 text-left">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
-                <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
+              <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${colors.bg}`}>
+                <span className={`text-xs font-bold ${colors.text}`}>
                   {group.files.length}
                 </span>
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{file0.name}</p>
+                <div className="flex items-center gap-2">
+                  <p className="truncate text-sm font-medium">{file0.name}</p>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${colors.bg} ${colors.text}`}>
+                    {colors.label}
+                  </span>
+                </div>
                 <p className="text-xs text-muted-foreground">
                   {group.files.length} copies &middot;{' '}
                   {formatBytes(group.files[0].size)} each &middot;
@@ -89,7 +102,11 @@ export function DuplicateGroupCard({
           <div className="border-t px-4 py-3">
             <div className="mb-2 flex items-center justify-between">
               <p className="text-xs font-medium text-muted-foreground">
-                {group.files.length} copies &middot; Total: {formatBytes(group.totalSize)}
+                {group.matchType === 'hash-exact' && 'SHA-256 match'}
+                {group.matchType === 'filename-similar' && 'Filename + size match'}
+                {group.matchType === 'perceptual' && 'Perceptual image match'}
+                {!group.matchType && 'Exact match'}
+                &nbsp;&middot; {group.files.length} copies &middot; Total: {formatBytes(group.totalSize)}
               </p>
               <div className="flex gap-2">
                 <Button
