@@ -198,7 +198,7 @@ export default function SettingsPage() {
                 <p>Built with Electron + Next.js</p>
                 <p>
                   <a
-                    href="https://github.com/anomalyco/filesight"
+                    href="https://github.com/MarkCoder1/filesight"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary underline underline-offset-4 hover:text-primary/80"
