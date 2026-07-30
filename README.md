@@ -47,9 +47,9 @@ FileSight gives you a clear picture of your files so you can make informed decis
 
 ## Screenshots
 
-| Home                                   | Dashboard                                        | Duplicates                                         |
+| Home                                   | Dashboard                                        | History                                         |
 | -------------------------------------- | ------------------------------------------------ | -------------------------------------------------- |
-| ![Home](./assets/screenshots/home.png) | ![Dashboard](./assets/screenshots/dashboard.png) | ![Duplicates](./assets/screenshots/duplicates.png) |
+| ![Home](./assets/screenshots/home.png) | ![Dashboard](./assets/screenshots/dashboard.png) | ![Duplicates](./assets/screenshots/history.png) |
 
 ## Installation
 
