@@ -74,7 +74,7 @@ export function OnboardingWizard({ onComplete }: Props) {
         </div>
 
         <div className="space-y-3 text-center">
-          <Button size="xl" className="w-full gap-2 shadow-lg shadow-primary/20" onClick={handleStart}>
+          <Button size="xl" className="w-full gap-2 shadow-lg shadow-primary/20 hover:cursor-pointer" onClick={handleStart}>
             <FolderOpen className="h-5 w-5" />
             Choose Folder &amp; Start
           </Button>
