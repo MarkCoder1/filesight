@@ -70,18 +70,18 @@ npm run dev
 
 ### Development Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start Next.js dev server + Electron in development mode |
-| `npm run dev:next` | Start only the Next.js dev server |
-| `npm run dev:electron` | Compile and launch Electron |
-| `npm run build` | Build Next.js static export + compile Electron TypeScript |
-| `npm test` | Run all tests |
-| `npm run dist` | Build and package for the current platform |
-| `npm run dist:mac` | Build and package for macOS |
-| `npm run dist:win` | Build and package for Windows |
-| `npm run lint` | Run ESLint |
-| `npm run format` | Format code with Prettier |
+| Command                | Description                                               |
+| ---------------------- | --------------------------------------------------------- |
+| `npm run dev`          | Start Next.js dev server + Electron in development mode   |
+| `npm run dev:next`     | Start only the Next.js dev server                         |
+| `npm run dev:electron` | Compile and launch Electron                               |
+| `npm run build`        | Build Next.js static export + compile Electron TypeScript |
+| `npm test`             | Run all tests                                             |
+| `npm run dist`         | Build and package for the current platform                |
+| `npm run dist:mac`     | Build and package for macOS                               |
+| `npm run dist:win`     | Build and package for Windows                             |
+| `npm run lint`         | Run ESLint                                                |
+| `npm run format`       | Format code with Prettier                                 |
 
 ### Project Structure
 

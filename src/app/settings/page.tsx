@@ -50,14 +50,8 @@ function ThemeSetting({
 }
 
 export default function SettingsPage() {
-  const {
-    settings,
-    settingsLoading,
-    saved,
-    updateSetting,
-    resetSetting,
-    selectFolder,
-  } = useSettings();
+  const { settings, settingsLoading, saved, updateSetting, resetSetting, selectFolder } =
+    useSettings();
 
   const { resetHistory } = useHistory();
 
@@ -88,19 +82,24 @@ export default function SettingsPage() {
       ) : (
         <>
           {/* General */}
-          <SettingsSection icon={FolderOpen} title="General" description="Basic application preferences">
-            <FolderPicker
-              selectedPath={settings.defaultScanFolder}
-              onSelect={selectFolder}
-            />
+          <SettingsSection
+            icon={FolderOpen}
+            title="General"
+            description="Basic application preferences"
+          >
+            <FolderPicker selectedPath={settings.defaultScanFolder} onSelect={selectFolder} />
           </SettingsSection>
 
           {/* Scanning */}
-          <SettingsSection icon={ScanLine} title="Scanning" description="Control how files are scanned">
+          <SettingsSection
+            icon={ScanLine}
+            title="Scanning"
+            description="Control how files are scanned"
+          >
             <div className="space-y-5">
               <ToggleSetting
                 label="Include Hidden Files"
-                description="Show files beginning with &quot;.&quot;"
+                description='Show files beginning with "."'
                 checked={settings.includeHiddenFiles}
                 onCheckedChange={(v) => updateSetting({ includeHiddenFiles: v })}
               />
@@ -131,7 +130,9 @@ export default function SettingsPage() {
                 unit="GB"
                 min={1}
                 max={100}
-                onChange={(v) => v !== null && updateSetting({ showLargeFilesThreshold: v * 1024 * 1024 * 1024 })}
+                onChange={(v) =>
+                  v !== null && updateSetting({ showLargeFilesThreshold: v * 1024 * 1024 * 1024 })
+                }
               />
               <Separator />
               <ThresholdInput
@@ -147,29 +148,38 @@ export default function SettingsPage() {
           </SettingsSection>
 
           {/* Appearance */}
-          <SettingsSection icon={Monitor} title="Appearance" description="Customize your appearance">
-            <ThemeSetting
-              value={settings.theme}
-              onChange={(v) => updateSetting({ theme: v })}
-            />
+          <SettingsSection
+            icon={Monitor}
+            title="Appearance"
+            description="Customize your appearance"
+          >
+            <ThemeSetting value={settings.theme} onChange={(v) => updateSetting({ theme: v })} />
           </SettingsSection>
 
           {/* Privacy */}
           <DangerZone onClearHistory={handleClearHistory} />
 
           {/* Reset */}
-          <SettingsSection icon={Layers} title="Reset Settings" description="Restore all preferences to defaults">
+          <SettingsSection
+            icon={Layers}
+            title="Reset Settings"
+            description="Restore all preferences to defaults"
+          >
             <Button variant="outline" size="sm" onClick={resetSetting}>
               Reset to Defaults
             </Button>
           </SettingsSection>
 
           {/* Onboarding */}
-          <SettingsSection icon={RefreshCw} title="Onboarding" description="The first-launch introduction">
+          <SettingsSection
+            icon={RefreshCw}
+            title="Onboarding"
+            description="The first-launch introduction"
+          >
             <Button
               variant="outline"
               size="sm"
-              className='hover:cursor-pointer'
+              className="hover:cursor-pointer"
               onClick={() => updateSetting({ hasCompletedOnboarding: false })}
             >
               Replay Onboarding

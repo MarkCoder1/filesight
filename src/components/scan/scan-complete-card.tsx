@@ -3,13 +3,7 @@
 import { CheckCircle2, FileIcon, HardDrive } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatBytes } from '@/lib/utils';
 import type { ScanResult } from '@/types';
 
@@ -19,11 +13,7 @@ interface ScanCompleteCardProps {
   onRescan: () => void;
 }
 
-export function ScanCompleteCard({
-  result,
-  onViewDashboard,
-  onRescan,
-}: ScanCompleteCardProps) {
+export function ScanCompleteCard({ result, onViewDashboard, onRescan }: ScanCompleteCardProps) {
   return (
     <Card className="mx-auto max-w-md text-center">
       <CardHeader>
@@ -44,18 +34,14 @@ export function ScanCompleteCard({
               <FileIcon className="h-4 w-4" />
               <span>Files</span>
             </div>
-            <p className="mt-1 text-2xl font-bold">
-              {result.totalFiles.toLocaleString()}
-            </p>
+            <p className="mt-1 text-2xl font-bold">{result.totalFiles.toLocaleString()}</p>
           </div>
           <div className="rounded-lg border p-3">
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <HardDrive className="h-4 w-4" />
               <span>Storage</span>
             </div>
-            <p className="mt-1 text-2xl font-bold">
-              {formatBytes(result.totalSize)}
-            </p>
+            <p className="mt-1 text-2xl font-bold">{formatBytes(result.totalSize)}</p>
           </div>
         </div>
 

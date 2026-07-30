@@ -1,8 +1,16 @@
 import sharp from 'sharp';
 
 const IMAGE_EXTENSIONS = new Set([
-  '.jpg', '.jpeg', '.png', '.gif', '.bmp',
-  '.tiff', '.tif', '.webp', '.avif', '.heic',
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.gif',
+  '.bmp',
+  '.tiff',
+  '.tif',
+  '.webp',
+  '.avif',
+  '.heic',
 ]);
 
 export function isImageFile(filePath: string): boolean {
@@ -11,11 +19,7 @@ export function isImageFile(filePath: string): boolean {
 }
 
 export async function computePerceptualHash(filePath: string): Promise<string> {
-  const buffer = await sharp(filePath)
-    .grayscale()
-    .resize(9, 8, { fit: 'fill' })
-    .raw()
-    .toBuffer();
+  const buffer = await sharp(filePath).grayscale().resize(9, 8, { fit: 'fill' }).raw().toBuffer();
 
   const pixels = new Uint8Array(buffer);
   let hash = 0n;
@@ -25,7 +29,7 @@ export async function computePerceptualHash(filePath: string): Promise<string> {
       const left = pixels[y * 9 + x];
       const right = pixels[y * 9 + x + 1];
       if (left > right) {
-        hash |= (1n << BigInt(y * 8 + x));
+        hash |= 1n << BigInt(y * 8 + x);
       }
     }
   }
@@ -52,7 +56,9 @@ export function computeImageSimilarity(hashA: string, hashB: string): number {
   return Math.max(0, (64 - distance) / 64);
 }
 
-export function getImageResolution(filePath: string): Promise<{ width: number; height: number } | null> {
+export function getImageResolution(
+  filePath: string,
+): Promise<{ width: number; height: number } | null> {
   return sharp(filePath)
     .metadata()
     .then((meta) => {

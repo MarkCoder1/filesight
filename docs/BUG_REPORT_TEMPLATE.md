@@ -34,6 +34,7 @@ If applicable, add screenshots or screen recordings.
 ## Crash Logs
 
 If the app crashed, include any logs from:
+
 - **macOS:** `~/Library/Logs/filesight/`
 - **Windows:** `%APPDATA%/filesight/logs/`
 - **Linux:** `~/.config/filesight/logs/`

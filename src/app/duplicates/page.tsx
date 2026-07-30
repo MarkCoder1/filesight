@@ -34,22 +34,22 @@ export default function DuplicatesPage() {
             </Link>
             <h1 className="text-2xl font-bold tracking-tight">Duplicate Files</h1>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Find and review duplicate files
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">Find and review duplicate files</p>
         </div>
         <div className="flex gap-2">
-          {duplicate.isComplete && duplicate.result && duplicate.result.duplicateGroups.length > 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRescan}
-              disabled={duplicate.isScanning}
-            >
-              <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-              Rescan
-            </Button>
-          )}
+          {duplicate.isComplete &&
+            duplicate.result &&
+            duplicate.result.duplicateGroups.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRescan}
+                disabled={duplicate.isScanning}
+              >
+                <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
+                Rescan
+              </Button>
+            )}
         </div>
       </div>
 

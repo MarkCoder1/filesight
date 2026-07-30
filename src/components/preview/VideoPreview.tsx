@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { useIpc } from '@/hooks/use-ipc';
+import { logPreviewError, logPreviewSuccess } from '@/lib/preview-logger';
+import { extname } from '@/lib/path-utils';
 import { base64ToBlobUrl, formatBytes } from '@/lib/utils';
 
 interface VideoPreviewProps {
@@ -20,24 +22,31 @@ export function VideoPreview({ filePath }: VideoPreviewProps) {
 
   useEffect(() => {
     let cancelled = false;
+    const ext = extname(filePath);
     readFileBase64(filePath)
       .then((result) => {
         if (cancelled) return;
         if (result.tooLarge) {
           setTooLarge(true);
           setSize(result.size);
+          logPreviewError(filePath, ext, 'readFileBase64', new Error('File too large'), 'video');
           return;
         }
         if (!result.data) {
           setError(true);
+          logPreviewError(filePath, ext, 'readFileBase64', new Error('No data returned'), 'video');
           return;
         }
         const blobUrl = base64ToBlobUrl(result.data, result.mime);
         urlRef.current = blobUrl;
         setUrl(blobUrl);
+        logPreviewSuccess(filePath, ext, 'readFileBase64', 'video');
       })
-      .catch(() => {
-        if (!cancelled) setError(true);
+      .catch((err) => {
+        if (!cancelled) {
+          setError(true);
+          logPreviewError(filePath, ext, 'readFileBase64', err, 'video');
+        }
       });
     return () => {
       cancelled = true;
@@ -71,11 +80,7 @@ export function VideoPreview({ filePath }: VideoPreviewProps) {
 
   return (
     <div className="flex items-center justify-center rounded-lg bg-black/5">
-      <video
-        controls
-        className="max-h-96 w-full rounded"
-        preload="metadata"
-      >
+      <video controls className="max-h-96 w-full rounded" preload="metadata">
         <source src={url} />
       </video>
     </div>

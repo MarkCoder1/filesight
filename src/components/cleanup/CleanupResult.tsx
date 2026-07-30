@@ -23,7 +23,9 @@ export function CleanupResult({ result, onDone, onViewReport }: CleanupResultPro
         ) : (
           <CheckCircle2 className="h-8 w-8 text-green-500" />
         )}
-        <h3 className="text-lg font-semibold">Cleanup {hasErrors ? 'completed with errors' : 'complete'}</h3>
+        <h3 className="text-lg font-semibold">
+          Cleanup {hasErrors ? 'completed with errors' : 'complete'}
+        </h3>
       </div>
 
       <div className="flex justify-center gap-6 text-center">

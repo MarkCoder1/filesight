@@ -65,7 +65,12 @@ describe('filterFiles', () => {
     it('filters small files (< 10MB)', () => {
       const filters: FileFilters = { category: 'all', size: 'small', date: 'all' };
       const result = filterFiles(FIXTURES, filters);
-      expect(result.map((f) => f.name)).toEqual(['tiny-image', 'small-doc', 'old-code', 'ancient-backup']);
+      expect(result.map((f) => f.name)).toEqual([
+        'tiny-image',
+        'small-doc',
+        'old-code',
+        'ancient-backup',
+      ]);
     });
 
     it('filters medium files (10MB–500MB)', () => {

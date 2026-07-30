@@ -1,6 +1,16 @@
 'use client';
 
-import { BarChart3, Clock, Copy, FileWarning, FolderTree, History, Lightbulb, List, Search } from 'lucide-react';
+import {
+  BarChart3,
+  Clock,
+  Copy,
+  FileWarning,
+  FolderTree,
+  History,
+  Lightbulb,
+  List,
+  Search,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useEffect } from 'react';
 
@@ -27,6 +37,7 @@ import { useCleanup } from '@/hooks/use-cleanup';
 import { useDuplicate } from '@/hooks/use-duplicate';
 import { useHistory } from '@/hooks/use-history';
 import { useScanStore } from '@/hooks/use-scan-store';
+import { useDuplicateStore } from '@/stores/duplicate-store';
 import { formatBytes } from '@/lib/utils';
 
 export default function DashboardPage() {
@@ -34,6 +45,8 @@ export default function DashboardPage() {
   const { analysis, isAnalyzing, runAnalysis } = useAnalysis();
   const insightsCleanup = useCleanup();
   const duplicate = useDuplicate();
+  const { removeFiles: removeFilesFromScan } = useScanStore();
+  const removeFilesFromDuplicates = useDuplicateStore((s) => s.removeFiles);
   const { latestCleanup, totalRecovered, fetchLatestCleanup, fetchTotalRecovered } = useHistory();
 
   useEffect(() => {
@@ -46,6 +59,18 @@ export default function DashboardPage() {
       runAnalysis(lastResult.files);
     }
   }, [lastResult, analysis, isAnalyzing, runAnalysis]);
+
+  useEffect(() => {
+    if (insightsCleanup.isComplete && insightsCleanup.result) {
+      const deletedPaths = insightsCleanup.result.results
+        .filter((r) => r.success)
+        .map((r) => r.path);
+      if (deletedPaths.length > 0) {
+        removeFilesFromScan(deletedPaths);
+        removeFilesFromDuplicates(deletedPaths);
+      }
+    }
+  }, [insightsCleanup.isComplete, insightsCleanup.result, removeFilesFromScan, removeFilesFromDuplicates]);
 
   const handleInsightsTrash = useCallback(
     (files: { path: string; name: string; size: number }[]) => {
@@ -69,14 +94,9 @@ export default function DashboardPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            Scan your folder to see insights
-          </p>
+          <p className="text-sm text-muted-foreground">Scan your folder to see insights</p>
         </div>
-        <EmptyState
-          variant="no-scans"
-          onAction={() => window.location.href = '/'}
-        />
+        <EmptyState variant="no-scans" onAction={() => (window.location.href = '/')} />
       </div>
     );
   }
@@ -85,9 +105,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">
-          Insights for {lastResult.path}
-        </p>
+        <p className="text-sm text-muted-foreground">Insights for {lastResult.path}</p>
       </div>
 
       <Tabs defaultValue="insights" className="space-y-4">
@@ -113,10 +131,7 @@ export default function DashboardPage() {
             <>
               {/* 1. Storage overview */}
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <StorageOverviewCard
-                  stats={analysis.storageStats}
-                  path={lastResult.path}
-                />
+                <StorageOverviewCard stats={analysis.storageStats} path={lastResult.path} />
               </div>
 
               {/* 2. Cleanup opportunities — suggestions */}
@@ -183,13 +198,15 @@ export default function DashboardPage() {
                     <Copy className="h-4 w-4 text-muted-foreground" />
                     Duplicate Files
                   </CardTitle>
-                  {duplicate.isComplete && duplicate.result && duplicate.result.duplicateGroups.length > 0 && (
-                    <Link href="/duplicates">
-                      <Button variant="outline" size="sm" className="h-7 text-xs">
-                        View all
-                      </Button>
-                    </Link>
-                  )}
+                  {duplicate.isComplete &&
+                    duplicate.result &&
+                    duplicate.result.duplicateGroups.length > 0 && (
+                      <Link href="/duplicates">
+                        <Button variant="outline" size="sm" className="h-7 text-xs">
+                          View all
+                        </Button>
+                      </Link>
+                    )}
                 </CardHeader>
                 <CardContent>
                   {duplicate.isScanning && duplicate.progress && (
@@ -213,7 +230,8 @@ export default function DashboardPage() {
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="text-lg font-bold">
-                              {duplicate.result.duplicateGroups.length} group{duplicate.result.duplicateGroups.length !== 1 ? 's' : ''}
+                              {duplicate.result.duplicateGroups.length} group
+                              {duplicate.result.duplicateGroups.length !== 1 ? 's' : ''}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               {formatBytes(duplicate.result.wastedSpace)} wasted
@@ -328,7 +346,10 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <FileExplorer files={lastResult.files} onGoHome={() => window.location.href = '/'} />
+              <FileExplorer
+                files={lastResult.files}
+                onGoHome={() => (window.location.href = '/')}
+              />
             </CardContent>
           </Card>
         </TabsContent>

@@ -36,13 +36,16 @@ export default function HomePage() {
     }
   }, [settingsLoaded, settings.hasCompletedOnboarding]);
 
-  const runScan = useCallback(async (dirPath: string) => {
-    reset();
-    const result = await scan(dirPath);
-    if (result) {
-      setLastResult(result);
-    }
-  }, [reset, scan, setLastResult]);
+  const runScan = useCallback(
+    async (dirPath: string) => {
+      reset();
+      const result = await scan(dirPath);
+      if (result) {
+        setLastResult(result);
+      }
+    },
+    [reset, scan, setLastResult],
+  );
 
   const handleScan = useCallback(() => {
     const target = selectedFolder || `${homeDirRef.current}/Downloads`;
@@ -80,9 +83,7 @@ export default function HomePage() {
         <HeroSection
           onScan={handleScan}
           onChooseFolder={handleChooseFolder}
-          isScanning={
-            state.status === 'counting' || state.status === 'scanning'
-          }
+          isScanning={state.status === 'counting' || state.status === 'scanning'}
           selectedFolder={selectedFolder}
         />
 
@@ -122,11 +123,7 @@ export default function HomePage() {
           </div>
         )}
 
-        {showIdle && (
-          <>
-            {!selectedFolder && <FeatureCards />}
-          </>
-        )}
+        {showIdle && <>{!selectedFolder && <FeatureCards />}</>}
       </div>
     </>
   );

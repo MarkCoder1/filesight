@@ -19,6 +19,7 @@ export interface ExplorerState {
   toggleFileSelection: (fileId: string) => void;
   selectAll: () => void;
   clearSelection: () => void;
+  removeFiles: (paths: string[]) => void;
 }
 
 export const useExplorerStore = create<ExplorerState>((set, get) => ({
@@ -54,6 +55,17 @@ export const useExplorerStore = create<ExplorerState>((set, get) => ({
     }),
 
   clearSelection: () => set({ selectedFiles: new Set() }),
+
+  removeFiles: (paths) =>
+    set((state) => {
+      const removedIds = new Set(
+        state.files.filter((f) => paths.includes(f.path)).map((f) => f.id),
+      );
+      const files = state.files.filter((f) => !removedIds.has(f.id));
+      const nextSelected = new Set(state.selectedFiles);
+      for (const id of removedIds) nextSelected.delete(id);
+      return { files, selectedFiles: nextSelected };
+    }),
 }));
 
 function applyAll(state: ExplorerState): FileEntry[] {

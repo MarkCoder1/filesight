@@ -26,9 +26,7 @@ function makeFile(
 
 describe('generateSuggestions', () => {
   it('generates old-installer suggestion for old installer files', () => {
-    const files = [
-      makeFile('Chrome.dmg', '.dmg', 200_000_000, 270, 'installers'),
-    ];
+    const files = [makeFile('Chrome.dmg', '.dmg', 200_000_000, 270, 'installers')];
     const suggestions = generateSuggestions(files);
     const installerSuggestion = suggestions.find((s) => s.type === 'old-installers');
     expect(installerSuggestion).toBeDefined();
@@ -37,17 +35,13 @@ describe('generateSuggestions', () => {
   });
 
   it('does not generate old-installer suggestion for recent installer files', () => {
-    const files = [
-      makeFile('Chrome.dmg', '.dmg', 200_000_000, 1, 'installers'),
-    ];
+    const files = [makeFile('Chrome.dmg', '.dmg', 200_000_000, 1, 'installers')];
     const suggestions = generateSuggestions(files);
     expect(suggestions.find((s) => s.type === 'old-installers')).toBeUndefined();
   });
 
   it('generates large-files suggestion for files over 2GB', () => {
-    const files = [
-      makeFile('video.mp4', '.mp4', 5_000_000_000, 1, 'videos'),
-    ];
+    const files = [makeFile('video.mp4', '.mp4', 5_000_000_000, 1, 'videos')];
     const suggestions = generateSuggestions(files);
     const largeSuggestion = suggestions.find((s) => s.type === 'large-files');
     expect(largeSuggestion).toBeDefined();
@@ -55,17 +49,13 @@ describe('generateSuggestions', () => {
   });
 
   it('does not generate large-files suggestion for files under 2GB', () => {
-    const files = [
-      makeFile('small.mp4', '.mp4', 1_000_000_000, 1, 'videos'),
-    ];
+    const files = [makeFile('small.mp4', '.mp4', 1_000_000_000, 1, 'videos')];
     const suggestions = generateSuggestions(files);
     expect(suggestions.find((s) => s.type === 'large-files')).toBeUndefined();
   });
 
   it('generates stale-archives suggestion for old archives', () => {
-    const files = [
-      makeFile('old.zip', '.zip', 500_000_000, 400, 'archives'),
-    ];
+    const files = [makeFile('old.zip', '.zip', 500_000_000, 400, 'archives')];
     const suggestions = generateSuggestions(files);
     const archiveSuggestion = suggestions.find((s) => s.type === 'stale-archives');
     expect(archiveSuggestion).toBeDefined();
@@ -73,9 +63,7 @@ describe('generateSuggestions', () => {
   });
 
   it('does not generate stale-archives for recent archives', () => {
-    const files = [
-      makeFile('recent.zip', '.zip', 500_000_000, 1, 'archives'),
-    ];
+    const files = [makeFile('recent.zip', '.zip', 500_000_000, 1, 'archives')];
     const suggestions = generateSuggestions(files);
     expect(suggestions.find((s) => s.type === 'stale-archives')).toBeUndefined();
   });

@@ -1,6 +1,7 @@
 import { app, BrowserWindow, protocol, net } from 'electron';
 import path from 'path';
 import fs from 'fs';
+import { pathToFileURL } from 'url';
 
 import { registerIpcHandlers } from './ipc';
 
@@ -66,7 +67,7 @@ function createWindow(): void {
 }
 
 function registerProtocol(): void {
-  protocol.handle('app', (request) => {
+  protocol.handle('app', async (request) => {
     const url = new URL(request.url);
     let relativePath = url.pathname.replace(/^\//, '');
 
@@ -80,7 +81,28 @@ function registerProtocol(): void {
     }
 
     const fullPath = path.join(OUT_DIR, relativePath);
-    return net.fetch(`file://${fullPath}`);
+    const fileUrl = pathToFileURL(fullPath).href;
+    const response = await net.fetch(fileUrl);
+
+    const csp =
+      "default-src 'self'; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+      "style-src 'self' 'unsafe-inline'; " +
+      "img-src 'self' data: blob:; " +
+      "media-src 'self' blob:; " +
+      "frame-src 'self' blob:; " +
+      "connect-src 'self'; " +
+      "font-src 'self' data:; " +
+      "object-src 'none';";
+
+    const headers = new Headers(response.headers);
+    headers.set('Content-Security-Policy', csp);
+
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   });
 }
 

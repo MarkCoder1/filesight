@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { useIpc } from '@/hooks/use-ipc';
+import { logPreviewError, logPreviewSuccess } from '@/lib/preview-logger';
+import { extname } from '@/lib/path-utils';
 
 interface TextPreviewProps {
   filePath: string;
@@ -17,17 +19,24 @@ export function TextPreview({ filePath }: TextPreviewProps) {
 
   useEffect(() => {
     let cancelled = false;
+    const ext = extname(filePath);
     readTextFile(filePath)
       .then((result) => {
         if (!cancelled) {
           setContent(result.content);
           setTruncated(result.truncated);
+          logPreviewSuccess(filePath, ext, 'readTextFile', 'text');
         }
       })
-      .catch(() => {
-        if (!cancelled) setError(true);
+      .catch((err) => {
+        if (!cancelled) {
+          setError(true);
+          logPreviewError(filePath, ext, 'readTextFile', err, 'text');
+        }
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [filePath, readTextFile]);
 
   if (error) {

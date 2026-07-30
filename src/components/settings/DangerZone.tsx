@@ -33,7 +33,8 @@ export function DangerZone({ onClearHistory }: Props) {
           <div>
             <CardTitle className="text-base">Privacy</CardTitle>
             <CardDescription>
-              All scanning happens locally. Files are never uploaded. No tracking. No account required.
+              All scanning happens locally. Files are never uploaded. No tracking. No account
+              required.
             </CardDescription>
           </div>
         </div>

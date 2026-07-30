@@ -60,15 +60,18 @@ export function EmptyState({ variant, onAction }: Props) {
       </div>
       <h3 className="mb-1 text-base font-semibold">{c.title}</h3>
       <p className="mb-5 max-w-xs text-sm text-muted-foreground">{c.description}</p>
-      {c.actionLabel && (
-        c.actionHref ? (
+      {c.actionLabel &&
+        (c.actionHref ? (
           <Link href={c.actionHref}>
-            <Button variant="outline" size="sm">{c.actionLabel}</Button>
+            <Button variant="outline" size="sm">
+              {c.actionLabel}
+            </Button>
           </Link>
         ) : onAction ? (
-          <Button variant="outline" size="sm" onClick={onAction}>{c.actionLabel}</Button>
-        ) : null
-      )}
+          <Button variant="outline" size="sm" onClick={onAction}>
+            {c.actionLabel}
+          </Button>
+        ) : null)}
     </div>
   );
 }

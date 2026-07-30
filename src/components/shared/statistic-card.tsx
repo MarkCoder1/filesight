@@ -27,9 +27,7 @@ export function StatisticCard({
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
             <p className="text-2xl font-bold tracking-tight">{value}</p>
-            {description && (
-              <p className="text-xs text-muted-foreground">{description}</p>
-            )}
+            {description && <p className="text-xs text-muted-foreground">{description}</p>}
           </div>
           <div
             className={cn(
@@ -37,9 +35,7 @@ export function StatisticCard({
               iconBgColor ?? 'bg-primary/10',
             )}
           >
-            <Icon
-              className={cn('h-5 w-5', iconColor ?? 'text-primary')}
-            />
+            <Icon className={cn('h-5 w-5', iconColor ?? 'text-primary')} />
           </div>
         </div>
       </CardContent>

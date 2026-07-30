@@ -9,8 +9,7 @@ import { useIpc } from './use-ipc';
 
 export function useAnalysis() {
   const { runAnalysis: ipcRunAnalysis } = useIpc();
-  const { analysis, isAnalyzing, setAnalysis, clearAnalysis, setIsAnalyzing } =
-    useInsightStore();
+  const { analysis, isAnalyzing, setAnalysis, clearAnalysis, setIsAnalyzing } = useInsightStore();
 
   const runAnalysis = useCallback(
     async (files: FileEntry[]) => {

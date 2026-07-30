@@ -24,8 +24,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   error: null,
 
   setSettings: (settings) => set({ settings, settingsLoaded: true }),
-  mergeSettings: (partial) =>
-    set((state) => ({ settings: { ...state.settings, ...partial } })),
+  mergeSettings: (partial) => set((state) => ({ settings: { ...state.settings, ...partial } })),
   setSettingsLoading: (settingsLoading) => set({ settingsLoading }),
   setError: (error) => set({ error }),
 }));

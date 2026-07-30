@@ -125,7 +125,14 @@ export async function scanDuplicates(
     processedSet.add(file.path);
 
     const percentage = 10 + Math.round((processedFiles / candidatesByExt.length) * 80);
-    emitProgress(onProgress, 'hashing', file.name, processedFiles, candidatesByExt.length, percentage);
+    emitProgress(
+      onProgress,
+      'hashing',
+      file.name,
+      processedFiles,
+      candidatesByExt.length,
+      percentage,
+    );
   }
 
   if (signal?.aborted) return [];
@@ -220,10 +227,21 @@ export async function scanDuplicates(
   );
 
   if (unmatchedImages.length >= 2) {
-    const imageGroups = await findPerceptualDuplicates(unmatchedImages, signal, (processed, total) => {
-      const percentage = 90 + Math.round((processed / total) * 10);
-      emitProgress(onProgress, 'perceptual', unmatchedImages[processed]?.name || '', processed, total, percentage);
-    });
+    const imageGroups = await findPerceptualDuplicates(
+      unmatchedImages,
+      signal,
+      (processed, total) => {
+        const percentage = 90 + Math.round((processed / total) * 10);
+        emitProgress(
+          onProgress,
+          'perceptual',
+          unmatchedImages[processed]?.name || '',
+          processed,
+          total,
+          percentage,
+        );
+      },
+    );
 
     for (const pGroup of imageGroups) {
       duplicateGroups.push(pGroup);

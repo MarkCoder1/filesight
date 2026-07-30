@@ -8,6 +8,7 @@ import { useCleanup } from '@/hooks/use-cleanup';
 import { useDuplicate } from '@/hooks/use-duplicate';
 import { useIpc } from '@/hooks/use-ipc';
 import { useScanStore } from '@/hooks/use-scan-store';
+import { useDuplicateStore } from '@/stores/duplicate-store';
 import { formatBytes } from '@/lib/utils';
 
 import { DuplicateProgress } from './DuplicateProgress';
@@ -22,12 +23,24 @@ export function DuplicateCard({ onGoHome }: DuplicateCardProps) {
   const duplicate = useDuplicate();
   const insightsCleanup = useCleanup();
   const ipc = useIpc();
+  const removeFilesFromDuplicates = useDuplicateStore((s) => s.removeFiles);
 
   useEffect(() => {
     if (lastResult && duplicate.isIdle && !duplicate.result) {
       duplicate.startScan(lastResult.files);
     }
   }, [lastResult, duplicate]);
+
+  useEffect(() => {
+    if (insightsCleanup.isComplete && insightsCleanup.result) {
+      const deletedPaths = insightsCleanup.result.results
+        .filter((r) => r.success)
+        .map((r) => r.path);
+      if (deletedPaths.length > 0) {
+        removeFilesFromDuplicates(deletedPaths);
+      }
+    }
+  }, [insightsCleanup.isComplete, insightsCleanup.result, removeFilesFromDuplicates]);
 
   const handleReveal = useCallback(
     (filePath: string) => {
@@ -93,7 +106,8 @@ export function DuplicateCard({ onGoHome }: DuplicateCardProps) {
       {duplicate.isComplete && duplicate.result && duplicate.result.duplicateGroups.length > 0 && (
         <div className="space-y-3">
           <p className="text-xs font-medium text-muted-foreground">
-            {duplicate.result.duplicateGroups.length} group{duplicate.result.duplicateGroups.length !== 1 ? 's' : ''} &middot;{' '}
+            {duplicate.result.duplicateGroups.length} group
+            {duplicate.result.duplicateGroups.length !== 1 ? 's' : ''} &middot;{' '}
             {formatBytes(duplicate.result.wastedSpace)} wasted
           </p>
           {duplicate.result.duplicateGroups.map((group) => (
@@ -113,12 +127,11 @@ export function DuplicateCard({ onGoHome }: DuplicateCardProps) {
       {insightsCleanup.isPreview && (
         <div className="rounded-lg border bg-background p-4">
           <p className="mb-2 text-sm font-medium">
-            Move {insightsCleanup.pendingFiles.length} file{insightsCleanup.pendingFiles.length !== 1 ? 's' : ''} to Trash?
+            Move {insightsCleanup.pendingFiles.length} file
+            {insightsCleanup.pendingFiles.length !== 1 ? 's' : ''} to Trash?
           </p>
           <p className="mb-3 text-xs text-muted-foreground">
-            Total: {formatBytes(
-              insightsCleanup.pendingFiles.reduce((s, f) => s + f.size, 0),
-            )}
+            Total: {formatBytes(insightsCleanup.pendingFiles.reduce((s, f) => s + f.size, 0))}
           </p>
           <div className="flex gap-2">
             <button
@@ -159,11 +172,13 @@ export function DuplicateCard({ onGoHome }: DuplicateCardProps) {
       {insightsCleanup.isComplete && insightsCleanup.result && (
         <div className="rounded-lg border bg-background p-4">
           <p className="text-sm font-medium text-green-600 dark:text-green-400">
-            Successfully moved {insightsCleanup.result.successCount} file{insightsCleanup.result.successCount !== 1 ? 's' : ''} to Trash
+            Successfully moved {insightsCleanup.result.successCount} file
+            {insightsCleanup.result.successCount !== 1 ? 's' : ''} to Trash
           </p>
           {insightsCleanup.result.failureCount > 0 && (
             <p className="mt-1 text-xs text-destructive">
-              {insightsCleanup.result.failureCount} file{insightsCleanup.result.failureCount !== 1 ? 's' : ''} could not be moved
+              {insightsCleanup.result.failureCount} file
+              {insightsCleanup.result.failureCount !== 1 ? 's' : ''} could not be moved
             </p>
           )}
           <button onClick={handleCleanupDone} className="mt-2 text-xs underline">

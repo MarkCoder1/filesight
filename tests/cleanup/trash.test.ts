@@ -127,9 +127,7 @@ describe('executeCleanup', () => {
   });
 
   it('works without progress callback', async () => {
-    const result = await executeCleanup([
-      { path: '/a.txt', name: 'a.txt', size: 100 },
-    ]);
+    const result = await executeCleanup([{ path: '/a.txt', name: 'a.txt', size: 100 }]);
 
     expect(result.successCount).toBe(1);
   });

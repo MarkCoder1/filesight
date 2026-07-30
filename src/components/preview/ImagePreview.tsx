@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { useIpc } from '@/hooks/use-ipc';
+import { logPreviewError, logPreviewSuccess } from '@/lib/preview-logger';
+import path from '@/lib/path-utils';
 
 interface ImagePreviewProps {
   filePath: string;
@@ -16,14 +18,23 @@ export function ImagePreview({ filePath }: ImagePreviewProps) {
 
   useEffect(() => {
     let cancelled = false;
+    const ext = path.extname(filePath);
     readImageFile(filePath)
       .then((url) => {
-        if (!cancelled) setDataUrl(url);
+        if (!cancelled) {
+          setDataUrl(url);
+          logPreviewSuccess(filePath, ext, 'readImageFile', 'image');
+        }
       })
-      .catch(() => {
-        if (!cancelled) setError(true);
+      .catch((err) => {
+        if (!cancelled) {
+          setError(true);
+          logPreviewError(filePath, ext, 'readImageFile', err, 'image');
+        }
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [filePath, readImageFile]);
 
   if (error) {
@@ -40,11 +51,7 @@ export function ImagePreview({ filePath }: ImagePreviewProps) {
 
   return (
     <div className="flex items-center justify-center rounded-lg bg-black/5 p-2">
-      <img
-        src={dataUrl}
-        alt="Preview"
-        className="max-h-96 max-w-full rounded object-contain"
-      />
+      <img src={dataUrl} alt="Preview" className="max-h-96 max-w-full rounded object-contain" />
     </div>
   );
 }

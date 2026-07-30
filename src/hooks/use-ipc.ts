@@ -25,13 +25,7 @@ export function useIpc() {
   );
 
   const onScanComplete = useCallback(
-    (
-      callback: (result: {
-        path: string;
-        totalFiles: number;
-        totalSize: number;
-      }) => void,
-    ) => {
+    (callback: (result: { path: string; totalFiles: number; totalSize: number }) => void) => {
       if (!api) return () => {};
       return api.onScanComplete(callback);
     },
@@ -125,7 +119,16 @@ export function useIpc() {
   );
 
   const recommendDuplicates = useCallback(
-    async (files: Array<{ path: string; name: string; size: number; modifiedAt: Date; resolution?: { width: number; height: number }; matchType?: string }>) => {
+    async (
+      files: Array<{
+        path: string;
+        name: string;
+        size: number;
+        modifiedAt: Date;
+        resolution?: { width: number; height: number };
+        matchType?: string;
+      }>,
+    ) => {
       if (!api) return null;
       return api.recommendDuplicates(files);
     },
@@ -256,7 +259,10 @@ export function useIpc() {
   );
 
   const generateOrgPlan = useCallback(
-    async (files: Array<{ path: string; name: string; size: number; extension: string }>, sourceFolder: string) => {
+    async (
+      files: Array<{ path: string; name: string; size: number; extension: string }>,
+      sourceFolder: string,
+    ) => {
       if (!api) throw new Error('Electron API not available');
       return api.generateOrgPlan(files, sourceFolder);
     },
@@ -264,7 +270,16 @@ export function useIpc() {
   );
 
   const executeOrgMoves = useCallback(
-    async (operations: Array<{ id: string; originalPath: string; newPath: string; fileName: string; size: number; category: string }>) => {
+    async (
+      operations: Array<{
+        id: string;
+        originalPath: string;
+        newPath: string;
+        fileName: string;
+        size: number;
+        category: string;
+      }>,
+    ) => {
       if (!api) throw new Error('Electron API not available');
       return api.executeOrgMoves(operations);
     },

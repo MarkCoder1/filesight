@@ -2,8 +2,16 @@ import { stat } from 'fs/promises';
 import path from 'path';
 
 const VIDEO_EXTENSIONS = new Set([
-  '.mp4', '.mov', '.avi', '.mkv', '.webm',
-  '.flv', '.wmv', '.m4v', '.3gp', '.ts',
+  '.mp4',
+  '.mov',
+  '.avi',
+  '.mkv',
+  '.webm',
+  '.flv',
+  '.wmv',
+  '.m4v',
+  '.3gp',
+  '.ts',
 ]);
 
 export function isVideoFile(filePath: string): boolean {
@@ -32,10 +40,7 @@ export async function getVideoMetadata(filePath: string): Promise<VideoMetadata 
   }
 }
 
-export function computeVideoSimilarity(
-  metaA: VideoMetadata,
-  metaB: VideoMetadata,
-): number {
+export function computeVideoSimilarity(metaA: VideoMetadata, metaB: VideoMetadata): number {
   if (metaA.extension !== metaB.extension) return 0;
 
   const sizeRatio = metaA.size / metaB.size;

@@ -5,9 +5,26 @@ import os from 'os';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { setDbPath, loadDatabase, saveDatabase, getData, resetDatabase } from '../../electron/database/database';
-import { saveScan, getScanHistory, getScanById, getLatestScan, compareScans } from '../../electron/database/scanRepository';
-import { saveCleanup, getCleanupHistory, getLatestCleanup, getTotalSpaceRecovered } from '../../electron/database/cleanupRepository';
+import {
+  setDbPath,
+  loadDatabase,
+  saveDatabase,
+  getData,
+  resetDatabase,
+} from '../../electron/database/database';
+import {
+  saveScan,
+  getScanHistory,
+  getScanById,
+  getLatestScan,
+  compareScans,
+} from '../../electron/database/scanRepository';
+import {
+  saveCleanup,
+  getCleanupHistory,
+  getLatestCleanup,
+  getTotalSpaceRecovered,
+} from '../../electron/database/cleanupRepository';
 import type { StoredData } from '../../electron/database/types';
 
 describe('Database', () => {
@@ -106,7 +123,9 @@ describe('ScanRepository', () => {
       totalFiles: 100,
       totalSize: 5000000,
       categories: [{ category: 'documents', count: 50, totalSize: 2000000, percentage: 40 }],
-      largestFiles: [{ name: 'big.pdf', path: '/Downloads/big.pdf', size: 1000000, category: 'documents' }],
+      largestFiles: [
+        { name: 'big.pdf', path: '/Downloads/big.pdf', size: 1000000, category: 'documents' },
+      ],
       duplicateSize: 0,
       suggestionCount: 2,
     });
@@ -316,9 +335,7 @@ describe('StoredData structure', () => {
           folderPath: '/Downloads',
           totalFiles: 100,
           totalSize: 5000000,
-          categories: [
-            { category: 'images', count: 30, totalSize: 2000000, percentage: 40 },
-          ],
+          categories: [{ category: 'images', count: 30, totalSize: 2000000, percentage: 40 }],
           largestFiles: [
             { name: 'photo.png', path: '/Downloads/photo.png', size: 1000000, category: 'images' },
           ],

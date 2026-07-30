@@ -13,7 +13,8 @@ export interface DuplicateFileInfo {
   modifiedAt: Date;
   hash: string;
   confidence: 'exact' | 'strong' | 'similar';
-  matchType: 'hash-exact' | 'filename-similar' | 'perceptual' | 'document-similar' | 'video-similar';
+  matchType:
+    'hash-exact' | 'filename-similar' | 'perceptual' | 'document-similar' | 'video-similar';
   similarity?: number;
   resolution?: { width: number; height: number } | null;
   isRecommended?: boolean;
@@ -26,11 +27,13 @@ export interface DuplicateGroup {
   totalSize: number;
   wastedSpace: number;
   confidence: 'exact' | 'strong' | 'similar';
-  matchType: 'hash-exact' | 'filename-similar' | 'perceptual' | 'document-similar' | 'video-similar';
+  matchType:
+    'hash-exact' | 'filename-similar' | 'perceptual' | 'document-similar' | 'video-similar';
   detectionLevel: 1 | 2 | 3;
 }
 
-export type ScanStage = 'metadata' | 'filename' | 'hashing' | 'perceptual' | 'document' | 'video' | 'recommending';
+export type ScanStage =
+  'metadata' | 'filename' | 'hashing' | 'perceptual' | 'document' | 'video' | 'recommending';
 
 export interface DuplicateScanProgress {
   stage: ScanStage;

@@ -62,10 +62,7 @@ export interface Analysis {
 }
 
 export type SuggestionType =
-  | 'old-installers'
-  | 'stale-archives'
-  | 'large-files'
-  | 'duplicate-candidates';
+  'old-installers' | 'stale-archives' | 'large-files' | 'duplicate-candidates';
 
 export interface Suggestion {
   id: string;
@@ -141,7 +138,8 @@ export interface AnalysisResult {
 
 export type ConfidenceLevel = 'exact' | 'strong' | 'similar';
 
-export type MatchType = 'hash-exact' | 'filename-similar' | 'perceptual' | 'document-similar' | 'video-similar';
+export type MatchType =
+  'hash-exact' | 'filename-similar' | 'perceptual' | 'document-similar' | 'video-similar';
 
 export interface DuplicateFileInfo {
   path: string;
@@ -167,7 +165,8 @@ export interface DuplicateGroup {
   detectionLevel?: 1 | 2 | 3;
 }
 
-export type ScanStage = 'metadata' | 'filename' | 'hashing' | 'perceptual' | 'document' | 'video' | 'recommending';
+export type ScanStage =
+  'metadata' | 'filename' | 'hashing' | 'perceptual' | 'document' | 'video' | 'recommending';
 
 export interface DuplicateScanProgress {
   stage?: ScanStage;
@@ -272,7 +271,8 @@ export interface FileStat {
   isFile: boolean;
 }
 
-export type OrgCategory = 'images' | 'documents' | 'videos' | 'audio' | 'archives' | 'installers' | 'unknown';
+export type OrgCategory =
+  'images' | 'documents' | 'videos' | 'audio' | 'archives' | 'installers' | 'unknown';
 
 export interface OrgCategoryInfo {
   category: OrgCategory;
@@ -322,9 +322,14 @@ export interface OrgUndoRecord {
 }
 
 export function getPreviewType(extension: string): PreviewType {
-  const ext = extension.toLowerCase();
+  const ext = extension.toLowerCase().replace(/^\./, '');
   if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'ico'].includes(ext)) return 'image';
-  if (['txt', 'md', 'json', 'js', 'ts', 'jsx', 'tsx', 'html', 'css', 'xml', 'csv', 'log'].includes(ext)) return 'text';
+  if (
+    ['txt', 'md', 'json', 'js', 'ts', 'jsx', 'tsx', 'html', 'css', 'xml', 'csv', 'log'].includes(
+      ext,
+    )
+  )
+    return 'text';
   if (ext === 'pdf') return 'pdf';
   if (['mp3', 'wav', 'ogg', 'm4a'].includes(ext)) return 'audio';
   if (['mp4', 'mov', 'webm', 'avi', 'mkv'].includes(ext)) return 'video';
@@ -334,18 +339,41 @@ export function getPreviewType(extension: string): PreviewType {
 export interface ElectronAPI {
   startScan: (dirPath: string) => Promise<ScanResult>;
   onScanProgress: (callback: (progress: ScanProgress) => void) => () => void;
-  onScanComplete: (callback: (result: { path: string; totalFiles: number; totalSize: number }) => void) => () => void;
+  onScanComplete: (
+    callback: (result: { path: string; totalFiles: number; totalSize: number }) => void,
+  ) => () => void;
   runAnalysis: (files: FileEntry[]) => Promise<AnalysisResult>;
-  trashPreview: (files: { path: string; name: string; size: number }[]) => Promise<{ filesCount: number; totalSize: number; files: { path: string; name: string }[] }>;
+  trashPreview: (
+    files: { path: string; name: string; size: number }[],
+  ) => Promise<{ filesCount: number; totalSize: number; files: { path: string; name: string }[] }>;
   moveToTrash: (files: { path: string; name: string; size: number }[]) => Promise<TrashResult>;
   onTrashProgress: (callback: (progress: TrashProgress) => void) => () => void;
-  findDuplicates: (files: { path: string; name: string; size: number; modifiedAt: Date }[]) => Promise<DuplicateScanResult>;
+  findDuplicates: (
+    files: { path: string; name: string; size: number; modifiedAt: Date }[],
+  ) => Promise<DuplicateScanResult>;
   cancelDuplicateScan: () => void;
   onDuplicateProgress: (callback: (progress: DuplicateScanProgress) => void) => () => void;
-  deleteDuplicates: (files: { path: string; name: string }[], totalSize: number) => Promise<DuplicateDeleteResult>;
-  onDuplicateDeleteProgress: (callback: (progress: { current: number; total: number; currentFile: string }) => void) => () => void;
-  recommendDuplicates: (files: Array<{ path: string; name: string; size: number; modifiedAt: Date; resolution?: { width: number; height: number }; matchType?: string }>) => Promise<{ path: string } | null>;
-  getScanHistory: (limit?: number, offset?: number) => Promise<{ scans: ScanHistoryRecord[]; total: number }>;
+  deleteDuplicates: (
+    files: { path: string; name: string }[],
+    totalSize: number,
+  ) => Promise<DuplicateDeleteResult>;
+  onDuplicateDeleteProgress: (
+    callback: (progress: { current: number; total: number; currentFile: string }) => void,
+  ) => () => void;
+  recommendDuplicates: (
+    files: Array<{
+      path: string;
+      name: string;
+      size: number;
+      modifiedAt: Date;
+      resolution?: { width: number; height: number };
+      matchType?: string;
+    }>,
+  ) => Promise<{ path: string } | null>;
+  getScanHistory: (
+    limit?: number,
+    offset?: number,
+  ) => Promise<{ scans: ScanHistoryRecord[]; total: number }>;
   getScanDetail: (id: string) => Promise<ScanHistoryRecord | null>;
   getLatestScan: () => Promise<ScanHistoryRecord | null>;
   getLatestCleanup: () => Promise<CleanupHistoryRecord | null>;
@@ -369,8 +397,23 @@ export interface ElectronAPI {
   copyToClipboard: (text: string) => Promise<void>;
   fileStat: (path: string) => Promise<FileStat>;
 
-  generateOrgPlan: (files: Array<{ path: string; name: string; size: number; extension: string }>, sourceFolder: string) => Promise<OrgPlan>;
-  executeOrgMoves: (operations: Array<{ id: string; originalPath: string; newPath: string; fileName: string; size: number; category: string }>) => Promise<OrgMoveResult>;
+  generateOrgPlan: (
+    files: Array<{ path: string; name: string; size: number; extension: string }>,
+    sourceFolder: string,
+  ) => Promise<OrgPlan>;
+  executeOrgMoves: (
+    operations: Array<{
+      id: string;
+      originalPath: string;
+      newPath: string;
+      fileName: string;
+      size: number;
+      category: string;
+    }>,
+  ) => Promise<OrgMoveResult>;
   getOrgHistory: () => Promise<OrgUndoRecord[]>;
-  undoOrgMoves: (recordId: string, moves: Array<{ originalPath: string; newPath: string }>) => Promise<{ undoneCount: number; failedCount: number }>;
+  undoOrgMoves: (
+    recordId: string,
+    moves: Array<{ originalPath: string; newPath: string }>,
+  ) => Promise<{ undoneCount: number; failedCount: number }>;
 }

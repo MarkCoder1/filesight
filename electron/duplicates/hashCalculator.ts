@@ -3,7 +3,10 @@ import { createReadStream } from 'fs';
 import { access } from 'fs/promises';
 
 export class HashError extends Error {
-  constructor(message: string, public readonly filePath: string) {
+  constructor(
+    message: string,
+    public readonly filePath: string,
+  ) {
     super(message);
     this.name = 'HashError';
   }

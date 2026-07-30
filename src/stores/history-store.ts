@@ -41,5 +41,13 @@ export const useHistoryStore = create<HistoryState>((set) => ({
   setTotalRecovered: (totalRecovered) => set({ totalRecovered }),
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
-  resetHistory: () => set({ scans: [], totalScans: 0, selectedScan: null, comparison: null, latestCleanup: null, totalRecovered: 0 }),
+  resetHistory: () =>
+    set({
+      scans: [],
+      totalScans: 0,
+      selectedScan: null,
+      comparison: null,
+      latestCleanup: null,
+      totalRecovered: 0,
+    }),
 }));

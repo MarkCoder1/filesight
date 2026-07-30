@@ -4,13 +4,18 @@ import os from 'os';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { buildScanResult, scanDuplicates } from '../../electron/duplicate-engine';
 import {
-  buildScanResult,
-  scanDuplicates,
-} from '../../electron/duplicate-engine';
-import { areFilenamesSimilar, normalizeFileName } from '../../electron/duplicate-engine/filenameMatcher';
+  areFilenamesSimilar,
+  normalizeFileName,
+} from '../../electron/duplicate-engine/filenameMatcher';
 import { calculateChunkHash, calculateFileHash } from '../../electron/duplicate-engine/hasher';
-import { areImagesSimilar, computeDHash, hammingDistance, isImageFile } from '../../electron/duplicate-engine/imageHash';
+import {
+  areImagesSimilar,
+  computeDHash,
+  hammingDistance,
+  isImageFile,
+} from '../../electron/duplicate-engine/imageHash';
 import type { DuplicateGroup } from '../../electron/duplicate-engine/types';
 
 describe('calculateFileHash', () => {
@@ -328,7 +333,12 @@ describe('scanDuplicates', () => {
 
   it('skips files that cause errors', async () => {
     const f1 = await makeFile('exist.txt', 'hello');
-    const f2 = { path: '/does/not/exist.txt', name: 'missing.txt', size: 100, modifiedAt: new Date() };
+    const f2 = {
+      path: '/does/not/exist.txt',
+      name: 'missing.txt',
+      size: 100,
+      modifiedAt: new Date(),
+    };
 
     const result = await scanDuplicates([f1, f2]);
 
@@ -411,8 +421,24 @@ describe('buildScanResult', () => {
         id: 'dup-0',
         hash: 'abc',
         files: [
-          { path: '/a.txt', name: 'a.txt', size: 100, modifiedAt: new Date(), hash: 'abc', confidence: 'exact', matchType: 'hash-exact' },
-          { path: '/b.txt', name: 'b.txt', size: 100, modifiedAt: new Date(), hash: 'abc', confidence: 'exact', matchType: 'hash-exact' },
+          {
+            path: '/a.txt',
+            name: 'a.txt',
+            size: 100,
+            modifiedAt: new Date(),
+            hash: 'abc',
+            confidence: 'exact',
+            matchType: 'hash-exact',
+          },
+          {
+            path: '/b.txt',
+            name: 'b.txt',
+            size: 100,
+            modifiedAt: new Date(),
+            hash: 'abc',
+            confidence: 'exact',
+            matchType: 'hash-exact',
+          },
         ],
         totalSize: 200,
         wastedSpace: 100,
@@ -423,9 +449,33 @@ describe('buildScanResult', () => {
         id: 'dup-1',
         hash: 'def',
         files: [
-          { path: '/c.txt', name: 'c.txt', size: 50, modifiedAt: new Date(), hash: 'def', confidence: 'exact', matchType: 'hash-exact' },
-          { path: '/d.txt', name: 'd.txt', size: 50, modifiedAt: new Date(), hash: 'def', confidence: 'exact', matchType: 'hash-exact' },
-          { path: '/e.txt', name: 'e.txt', size: 50, modifiedAt: new Date(), hash: 'def', confidence: 'exact', matchType: 'hash-exact' },
+          {
+            path: '/c.txt',
+            name: 'c.txt',
+            size: 50,
+            modifiedAt: new Date(),
+            hash: 'def',
+            confidence: 'exact',
+            matchType: 'hash-exact',
+          },
+          {
+            path: '/d.txt',
+            name: 'd.txt',
+            size: 50,
+            modifiedAt: new Date(),
+            hash: 'def',
+            confidence: 'exact',
+            matchType: 'hash-exact',
+          },
+          {
+            path: '/e.txt',
+            name: 'e.txt',
+            size: 50,
+            modifiedAt: new Date(),
+            hash: 'def',
+            confidence: 'exact',
+            matchType: 'hash-exact',
+          },
         ],
         totalSize: 150,
         wastedSpace: 100,

@@ -16,7 +16,12 @@ export function analyzeCategories(files: FileEntry[]): CategoryStats[] {
 
   const totalSize = Array.from(map.values()).reduce((s, v) => s + v.totalSize, 0);
 
-  return (Array.from(map.entries()) as [FileCategory, { count: number; totalSize: number; files: string[] }][])
+  return (
+    Array.from(map.entries()) as [
+      FileCategory,
+      { count: number; totalSize: number; files: string[] },
+    ][]
+  )
     .map(([category, data]) => ({
       category,
       count: data.count,

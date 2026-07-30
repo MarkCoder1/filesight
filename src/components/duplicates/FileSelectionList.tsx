@@ -18,12 +18,18 @@ interface FileSelectionListProps {
 
 function getMatchTypeLabel(matchType?: string): string {
   switch (matchType) {
-    case 'hash-exact': return 'Exact';
-    case 'filename-similar': return 'Filename';
-    case 'perceptual': return 'Similar';
-    case 'document-similar': return 'Document';
-    case 'video-similar': return 'Video';
-    default: return '';
+    case 'hash-exact':
+      return 'Exact';
+    case 'filename-similar':
+      return 'Filename';
+    case 'perceptual':
+      return 'Similar';
+    case 'document-similar':
+      return 'Document';
+    case 'video-similar':
+      return 'Video';
+    default:
+      return '';
   }
 }
 
@@ -57,9 +63,7 @@ export function FileSelectionList({
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <p className="truncate text-sm font-medium">
-                  {file.name}
-                </p>
+                <p className="truncate text-sm font-medium">{file.name}</p>
                 {isRecommended && (
                   <span className="flex shrink-0 items-center gap-0.5 rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
                     <Star className="h-3 w-3" />
@@ -82,7 +86,9 @@ export function FileSelectionList({
                 <span>{formatBytes(file.size)}</span>
                 <span>{formatDate(file.modifiedAt)}</span>
                 {file.resolution && (
-                  <span>{file.resolution.width}x{file.resolution.height}</span>
+                  <span>
+                    {file.resolution.width}x{file.resolution.height}
+                  </span>
                 )}
               </div>
             </div>

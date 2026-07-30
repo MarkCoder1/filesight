@@ -19,16 +19,8 @@ interface OrganizationAssistantProps {
 }
 
 export function OrganizationAssistant({ files, folderPath }: OrganizationAssistantProps) {
-  const {
-    plan,
-    isGenerating,
-    isExecuting,
-    result,
-    error,
-    generatePlan,
-    executeMoves,
-    reset,
-  } = useOrganization();
+  const { plan, isGenerating, isExecuting, result, error, generatePlan, executeMoves, reset } =
+    useOrganization();
 
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
@@ -100,7 +92,12 @@ export function OrganizationAssistant({ files, folderPath }: OrganizationAssista
             Organize Files
           </CardTitle>
           {!hasGenerated && (
-            <Button size="sm" className="h-7 text-xs" onClick={handleGenerate} disabled={isGenerating}>
+            <Button
+              size="sm"
+              className="h-7 text-xs"
+              onClick={handleGenerate}
+              disabled={isGenerating}
+            >
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-1 h-3 w-3 animate-spin" />
@@ -159,7 +156,8 @@ export function OrganizationAssistant({ files, folderPath }: OrganizationAssista
             <div className="text-sm">
               <span className="font-medium">
                 {Array.from(selectedCategories).reduce(
-                  (sum, cat) => sum + (plan.categories.find((c) => c.category === cat)?.fileCount ?? 0),
+                  (sum, cat) =>
+                    sum + (plan.categories.find((c) => c.category === cat)?.fileCount ?? 0),
                   0,
                 )}
               </span>{' '}
@@ -167,7 +165,8 @@ export function OrganizationAssistant({ files, folderPath }: OrganizationAssista
               <span className="font-medium">
                 {formatBytes(
                   Array.from(selectedCategories).reduce(
-                    (sum, cat) => sum + (plan.categories.find((c) => c.category === cat)?.totalSize ?? 0),
+                    (sum, cat) =>
+                      sum + (plan.categories.find((c) => c.category === cat)?.totalSize ?? 0),
                     0,
                   ),
                 )}

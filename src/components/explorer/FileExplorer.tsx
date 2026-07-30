@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { startTransition, useCallback, useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { CleanupDialog } from '@/components/cleanup/CleanupDialog';
@@ -9,6 +9,7 @@ import { CleanupResult } from '@/components/cleanup/CleanupResult';
 import { SelectedFilesBar } from '@/components/cleanup/SelectedFilesBar';
 import { PreviewPanel } from '@/components/preview/PreviewPanel';
 import { useCleanup } from '@/hooks/use-cleanup';
+import { useScanStore } from '@/hooks/use-scan-store';
 import { filterFiles } from '@/lib/fileFiltering';
 import { searchFiles } from '@/lib/fileSearch';
 import { sortFiles } from '@/lib/fileSorting';
@@ -34,6 +35,7 @@ export function FileExplorer({ files, onGoHome }: FileExplorerProps) {
     activeFilters,
     sortOption,
     selectedFiles,
+    storeFiles,
     setFiles,
     setSearchQuery,
     setActiveFilters,
@@ -41,12 +43,14 @@ export function FileExplorer({ files, onGoHome }: FileExplorerProps) {
     toggleFileSelection,
     selectAll,
     clearSelection,
+    removeFiles: removeFilesFromExplorer,
   } = useExplorerStore(
     useShallow((s) => ({
       searchQuery: s.searchQuery,
       activeFilters: s.activeFilters,
       sortOption: s.sortOption,
       selectedFiles: s.selectedFiles,
+      storeFiles: s.files,
       setFiles: s.setFiles,
       setSearchQuery: s.setSearchQuery,
       setActiveFilters: s.setActiveFilters,
@@ -54,27 +58,41 @@ export function FileExplorer({ files, onGoHome }: FileExplorerProps) {
       toggleFileSelection: s.toggleFileSelection,
       selectAll: s.selectAll,
       clearSelection: s.clearSelection,
+      removeFiles: s.removeFiles,
     })),
   );
 
   const cleanup = useCleanup();
+  const { removeFiles: removeFilesFromScan } = useScanStore();
 
   useEffect(() => {
     setFiles(files);
   }, [files, setFiles]);
 
   const filtered = useMemo(() => {
-    let result = files;
+    let result = storeFiles;
     result = searchFiles(result, searchQuery);
     result = filterFiles(result, activeFilters);
     result = sortFiles(result, sortOption);
     return result;
-  }, [files, searchQuery, activeFilters, sortOption]);
+  }, [storeFiles, searchQuery, activeFilters, sortOption]);
 
-  const handleSearch = useCallback(
-    (text: string) => setSearchQuery({ text }),
-    [setSearchQuery],
-  );
+  useEffect(() => {
+    if (cleanup.isComplete && cleanup.result) {
+      const deletedPaths = cleanup.result.results
+        .filter((r) => r.success)
+        .map((r) => r.path);
+      if (deletedPaths.length > 0) {
+        removeFilesFromExplorer(deletedPaths);
+        removeFilesFromScan(deletedPaths);
+        if (previewFile && deletedPaths.includes(previewFile.path)) {
+          startTransition(() => setPreviewFile(null));
+        }
+      }
+    }
+  }, [cleanup.isComplete, cleanup.result, removeFilesFromExplorer, removeFilesFromScan, previewFile]);
+
+  const handleSearch = useCallback((text: string) => setSearchQuery({ text }), [setSearchQuery]);
 
   const hasActiveFilters =
     activeFilters.category !== 'all' ||
@@ -89,8 +107,8 @@ export function FileExplorer({ files, onGoHome }: FileExplorerProps) {
   }, [setSearchQuery, setActiveFilters, setSortOption]);
 
   const selectedFileEntries = useMemo(() => {
-    return files.filter((f) => selectedFiles.has(f.id));
-  }, [files, selectedFiles]);
+    return storeFiles.filter((f) => selectedFiles.has(f.id));
+  }, [storeFiles, selectedFiles]);
 
   const selectedTotalSize = useMemo(
     () => selectedFileEntries.reduce((s, f) => s + f.size, 0),
@@ -119,39 +137,41 @@ export function FileExplorer({ files, onGoHome }: FileExplorerProps) {
     setPreviewFile(null);
   }, []);
 
-  if (files.length === 0) {
+  if (storeFiles.length === 0 && !cleanup.isComplete && !cleanup.isError && !cleanup.isInProgress) {
     return <EmptyResults type="no-data" actionLabel="Scan folder" onAction={onGoHome} />;
   }
 
   const listContent = (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        <div className="flex-1">
-          <SearchBar value={searchQuery.text} onChange={handleSearch} />
-        </div>
-        <SortDropdown value={sortOption} onChange={setSortOption} />
-      </div>
+      {storeFiles.length > 0 && (
+        <>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+            <div className="flex-1">
+              <SearchBar value={searchQuery.text} onChange={handleSearch} />
+            </div>
+            <SortDropdown value={sortOption} onChange={setSortOption} />
+          </div>
 
-      <FilterPanel
-        filters={activeFilters}
-        onCategoryChange={(category) =>
-          setActiveFilters({ ...activeFilters, category })
-        }
-        onSizeChange={(size) => setActiveFilters({ ...activeFilters, size })}
-        onDateChange={(date) => setActiveFilters({ ...activeFilters, date })}
-        onReset={resetAll}
-        hasActiveFilters={hasActiveFilters}
-        resultCount={filtered.length}
-      />
+          <FilterPanel
+            filters={activeFilters}
+            onCategoryChange={(category) => setActiveFilters({ ...activeFilters, category })}
+            onSizeChange={(size) => setActiveFilters({ ...activeFilters, size })}
+            onDateChange={(date) => setActiveFilters({ ...activeFilters, date })}
+            onReset={resetAll}
+            hasActiveFilters={hasActiveFilters}
+            resultCount={filtered.length}
+          />
 
-      <FileTable
-        files={filtered}
-        selectedIds={selectedFiles}
-        onToggleSelect={toggleFileSelection}
-        onSelectAll={selectAll}
-        onClearSelection={clearSelection}
-        onPreview={handlePreview}
-      />
+          <FileTable
+            files={filtered}
+            selectedIds={selectedFiles}
+            onToggleSelect={toggleFileSelection}
+            onSelectAll={selectAll}
+            onClearSelection={clearSelection}
+            onPreview={handlePreview}
+          />
+        </>
+      )}
 
       {selectedFiles.size > 0 && !cleanup.isPreview && !cleanup.isInProgress && (
         <SelectedFilesBar
@@ -196,14 +216,16 @@ export function FileExplorer({ files, onGoHome }: FileExplorerProps) {
           </button>
         </div>
       )}
+
+      {storeFiles.length === 0 && !cleanup.isComplete && !cleanup.isError && !cleanup.isInProgress && (
+        <EmptyResults type="no-data" actionLabel="Scan folder" onAction={onGoHome} />
+      )}
     </div>
   );
 
   return (
     <div className="flex h-full gap-4">
-      <div className={previewFile ? 'flex-1 min-w-0' : 'w-full'}>
-        {listContent}
-      </div>
+      <div className={previewFile ? 'flex-1 min-w-0' : 'w-full'}>{listContent}</div>
       {previewFile && (
         <div className="w-[420px] shrink-0 border-l">
           <PreviewPanel file={previewFile} onClose={handleClosePreview} />

@@ -1,6 +1,15 @@
 'use client';
 
-import { ArrowLeft, BarChart3, FileWarning, FolderTree, HardDrive, History, Layers, Trash2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  BarChart3,
+  FileWarning,
+  FolderTree,
+  HardDrive,
+  History,
+  Layers,
+  Trash2,
+} from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 
@@ -51,7 +60,11 @@ export function HistoryContent() {
     fetchTotalRecovered,
   } = useHistory();
 
-  const { history: orgHistory, fetchHistory: fetchOrgHistory, undo: undoOrgMoves } = useOrganization();
+  const {
+    history: orgHistory,
+    fetchHistory: fetchOrgHistory,
+    undo: undoOrgMoves,
+  } = useOrganization();
 
   useEffect(() => {
     if (detailId) {
@@ -62,7 +75,14 @@ export function HistoryContent() {
       fetchTotalRecovered();
       fetchOrgHistory();
     }
-  }, [detailId, fetchScans, fetchScanDetail, fetchLatestCleanup, fetchTotalRecovered, fetchOrgHistory]);
+  }, [
+    detailId,
+    fetchScans,
+    fetchScanDetail,
+    fetchLatestCleanup,
+    fetchTotalRecovered,
+    fetchOrgHistory,
+  ]);
 
   useEffect(() => {
     if (compareId && detailId && compareId !== detailId) {
@@ -89,14 +109,20 @@ export function HistoryContent() {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-2">
-          <button onClick={goBack} className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted">
+          <button
+            onClick={goBack}
+            className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted"
+          >
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Scan Details</h1>
             <p className="text-sm text-muted-foreground">
               {new Date(selectedScan.date).toLocaleDateString('en-US', {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
               })}
             </p>
           </div>
@@ -172,15 +198,25 @@ export function HistoryContent() {
                 <div key={cat.category}>
                   <div className="mb-1 flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: CATEGORY_COLORS[cat.category] ?? '#6b7280' }} />
+                      <span
+                        className="h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: CATEGORY_COLORS[cat.category] ?? '#6b7280' }}
+                      />
                       <span className="font-medium capitalize">{cat.category}</span>
                     </div>
                     <span className="text-muted-foreground">
-                      {formatBytes(cat.totalSize)} &middot; {cat.count} file{cat.count !== 1 ? 's' : ''}
+                      {formatBytes(cat.totalSize)} &middot; {cat.count} file
+                      {cat.count !== 1 ? 's' : ''}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                    <div className="h-full rounded-full transition-all" style={{ width: `${cat.percentage}%`, backgroundColor: CATEGORY_COLORS[cat.category] ?? '#6b7280' }} />
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${cat.percentage}%`,
+                        backgroundColor: CATEGORY_COLORS[cat.category] ?? '#6b7280',
+                      }}
+                    />
                   </div>
                 </div>
               ))}
@@ -199,13 +235,20 @@ export function HistoryContent() {
             <CardContent>
               <div className="space-y-2">
                 {selectedScan.largestFiles.map((file, i) => (
-                  <div key={`${file.path}-${i}`} className="flex items-center gap-3 rounded-lg border px-3 py-2">
-                    <span className="w-5 text-center text-xs font-medium text-muted-foreground">{i + 1}</span>
+                  <div
+                    key={`${file.path}-${i}`}
+                    className="flex items-center gap-3 rounded-lg border px-3 py-2"
+                  >
+                    <span className="w-5 text-center text-xs font-medium text-muted-foreground">
+                      {i + 1}
+                    </span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{file.name}</p>
                       <p className="truncate text-xs text-muted-foreground">{file.path}</p>
                     </div>
-                    <span className="shrink-0 text-sm tabular-nums font-medium">{formatBytes(file.size)}</span>
+                    <span className="shrink-0 text-sm tabular-nums font-medium">
+                      {formatBytes(file.size)}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -230,9 +273,7 @@ export function HistoryContent() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Scan History</h1>
-        <p className="text-sm text-muted-foreground">
-          Past scans and cleanup activities
-        </p>
+        <p className="text-sm text-muted-foreground">Past scans and cleanup activities</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -241,7 +282,11 @@ export function HistoryContent() {
             <CardTitle className="text-sm font-medium">Total Scans</CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? <Skeleton className="h-8 w-16" /> : <p className="text-2xl font-bold">{totalScans}</p>}
+            {loading ? (
+              <Skeleton className="h-8 w-16" />
+            ) : (
+              <p className="text-2xl font-bold">{totalScans}</p>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -249,11 +294,17 @@ export function HistoryContent() {
             <CardTitle className="text-sm font-medium">Latest Storage</CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? <Skeleton className="h-8 w-24" /> : (
+            {loading ? (
+              <Skeleton className="h-8 w-24" />
+            ) : (
               <>
-                <p className="text-2xl font-bold">{latestScan ? formatBytes(latestScan.totalSize) : '—'}</p>
+                <p className="text-2xl font-bold">
+                  {latestScan ? formatBytes(latestScan.totalSize) : '—'}
+                </p>
                 {previousScan && (
-                  <p className={`text-xs ${sizeDiff <= 0 ? 'text-green-600 dark:text-green-400' : 'text-destructive'}`}>
+                  <p
+                    className={`text-xs ${sizeDiff <= 0 ? 'text-green-600 dark:text-green-400' : 'text-destructive'}`}
+                  >
                     {sizeDiff <= 0 ? '↓' : '↑'} {formatBytes(Math.abs(sizeDiff))} from previous
                   </p>
                 )}
@@ -266,9 +317,13 @@ export function HistoryContent() {
             <CardTitle className="text-sm font-medium">Total Recovered</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{formatBytes(totalRecovered)}</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+              {formatBytes(totalRecovered)}
+            </p>
             {latestCleanup && (
-              <p className="text-xs text-muted-foreground">Last cleanup: {new Date(latestCleanup.date).toLocaleDateString()}</p>
+              <p className="text-xs text-muted-foreground">
+                Last cleanup: {new Date(latestCleanup.date).toLocaleDateString()}
+              </p>
             )}
           </CardContent>
         </Card>
@@ -340,11 +395,7 @@ export function HistoryContent() {
           <div className="space-y-2">
             {orgHistory.length > 0 ? (
               orgHistory.map((record) => (
-                <OrganizationHistoryCard
-                  key={record.id}
-                  record={record}
-                  onUndo={handleOrgUndo}
-                />
+                <OrganizationHistoryCard key={record.id} record={record} onUndo={handleOrgUndo} />
               ))
             ) : (
               <p className="text-xs text-muted-foreground">No organization activity yet.</p>

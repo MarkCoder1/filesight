@@ -3,7 +3,11 @@ import { describe, expect, it } from 'vitest';
 import { findLargestFiles } from '../../electron/analyzer/largeFilesAnalyzer';
 import type { FileEntry } from '../../src/types';
 
-function makeFile(name: string, size: number, category: FileEntry['category'] = 'documents'): FileEntry {
+function makeFile(
+  name: string,
+  size: number,
+  category: FileEntry['category'] = 'documents',
+): FileEntry {
   return {
     id: name,
     name,
@@ -39,9 +43,15 @@ describe('findLargestFiles', () => {
 
   it('excludes directories', () => {
     const dir: FileEntry = {
-      id: 'folder', name: 'folder', path: '/test/folder',
-      extension: '', size: 999_999, createdAt: new Date(), modifiedAt: new Date(),
-      isDirectory: true, category: 'other',
+      id: 'folder',
+      name: 'folder',
+      path: '/test/folder',
+      extension: '',
+      size: 999_999,
+      createdAt: new Date(),
+      modifiedAt: new Date(),
+      isDirectory: true,
+      category: 'other',
     };
     const file = makeFile('real.txt', 500);
     const result = findLargestFiles([dir, file]);

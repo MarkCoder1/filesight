@@ -6,7 +6,8 @@ const features = [
   {
     icon: BarChart3,
     title: 'Analyze Storage',
-    description: 'Understand what is using your space with visual breakdowns by file type and size.',
+    description:
+      'Understand what is using your space with visual breakdowns by file type and size.',
     color: 'text-blue-500',
     bgColor: 'bg-blue-500/10',
   },
@@ -20,7 +21,8 @@ const features = [
   {
     icon: Trash2,
     title: 'Safe Cleanup',
-    description: 'Nothing is deleted automatically. Review recommendations and choose what to trash.',
+    description:
+      'Nothing is deleted automatically. Review recommendations and choose what to trash.',
     color: 'text-rose-500',
     bgColor: 'bg-rose-500/10',
   },

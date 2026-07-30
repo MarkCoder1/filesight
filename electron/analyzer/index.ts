@@ -8,13 +8,7 @@ import { analyzeStorage } from './storageAnalyzer';
 import { generateSuggestions } from './suggestionEngine';
 
 export type { AnalysisResult };
-export {
-  analyzeCategories,
-  analyzeStorage,
-  findLargestFiles,
-  findOldFiles,
-  generateSuggestions,
-};
+export { analyzeCategories, analyzeStorage, findLargestFiles, findOldFiles, generateSuggestions };
 
 export function analyzeFiles(files: FileEntry[]): AnalysisResult {
   return {

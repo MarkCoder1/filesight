@@ -40,7 +40,11 @@ export function recommendBestFile(files: RecommendedFile[]): RecommendedFile | n
 export async function trashDuplicateFiles(
   paths: { path: string; name: string }[],
   onProgress?: (current: number, total: number, currentFile: string) => void,
-): Promise<{ successCount: number; failureCount: number; results: Array<{ path: string; name: string; success: boolean; error?: string }> }> {
+): Promise<{
+  successCount: number;
+  failureCount: number;
+  results: Array<{ path: string; name: string; success: boolean; error?: string }>;
+}> {
   const results: Array<{ path: string; name: string; success: boolean; error?: string }> = [];
   let successCount = 0;
   let failureCount = 0;

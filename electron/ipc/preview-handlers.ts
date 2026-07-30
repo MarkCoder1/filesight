@@ -6,6 +6,11 @@ const MAX_TEXT_SIZE = 512 * 1024;
 const MAX_LINES = 3000;
 const MAX_BINARY_PREVIEW_SIZE = 100 * 1024 * 1024;
 
+function logError(context: string, filePath: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(`[PreviewHandler:${context}] path="${filePath}" error="${message}"`);
+}
+
 function getMimeType(ext: string): string {
   const map: Record<string, string> = {
     png: 'image/png',
@@ -43,35 +48,50 @@ async function readImageBase64(filePath: string): Promise<string> {
 
 export function registerPreviewHandlers(): void {
   ipcMain.handle('fs:read-text-file', async (_event, { path: filePath }: { path: string }) => {
-    const stat = await fs.stat(filePath);
-    const truncated = stat.size > MAX_TEXT_SIZE;
-    const buffer = await fs.readFile(filePath, {
-      encoding: 'utf-8',
-      flag: 'r',
-    });
-    let content = truncated ? buffer.slice(0, MAX_TEXT_SIZE) : buffer;
+    try {
+      const stat = await fs.stat(filePath);
+      const truncated = stat.size > MAX_TEXT_SIZE;
+      const buffer = await fs.readFile(filePath, {
+        encoding: 'utf-8',
+        flag: 'r',
+      });
+      let content = truncated ? buffer.slice(0, MAX_TEXT_SIZE) : buffer;
 
-    const lines = content.split('\n');
-    if (lines.length > MAX_LINES) {
-      content = lines.slice(0, MAX_LINES).join('\n');
+      const lines = content.split('\n');
+      if (lines.length > MAX_LINES) {
+        content = lines.slice(0, MAX_LINES).join('\n');
+      }
+      return { content, truncated };
+    } catch (err) {
+      logError('read-text-file', filePath, err);
+      throw err;
     }
-    return { content, truncated };
   });
 
   ipcMain.handle('fs:read-image-file', async (_event, { path: filePath }: { path: string }) => {
-    return readImageBase64(filePath);
+    try {
+      return await readImageBase64(filePath);
+    } catch (err) {
+      logError('read-image-file', filePath, err);
+      throw err;
+    }
   });
 
   ipcMain.handle('fs:read-file-base64', async (_event, { path: filePath }: { path: string }) => {
-    const stat = await fs.stat(filePath);
-    const tooLarge = stat.size > MAX_BINARY_PREVIEW_SIZE;
-    const ext = path.extname(filePath).toLowerCase().slice(1);
-    const mime = getMimeType(ext);
-    if (tooLarge) {
-      return { data: null, mime, tooLarge: true, size: stat.size };
+    try {
+      const stat = await fs.stat(filePath);
+      const tooLarge = stat.size > MAX_BINARY_PREVIEW_SIZE;
+      const ext = path.extname(filePath).toLowerCase().slice(1);
+      const mime = getMimeType(ext);
+      if (tooLarge) {
+        return { data: null, mime, tooLarge: true, size: stat.size };
+      }
+      const buffer = await fs.readFile(filePath);
+      return { data: buffer.toString('base64'), mime, tooLarge: false, size: stat.size };
+    } catch (err) {
+      logError('read-file-base64', filePath, err);
+      throw err;
     }
-    const buffer = await fs.readFile(filePath);
-    return { data: buffer.toString('base64'), mime, tooLarge: false, size: stat.size };
   });
 
   ipcMain.handle('fs:file-exists', async (_event, { path: filePath }: { path: string }) => {
@@ -92,13 +112,18 @@ export function registerPreviewHandlers(): void {
   });
 
   ipcMain.handle('fs:file-stat', async (_event, { path: filePath }: { path: string }) => {
-    const stat = await fs.stat(filePath);
-    return {
-      size: stat.size,
-      modifiedAt: stat.mtime.toISOString(),
-      createdAt: stat.birthtime.toISOString(),
-      isDirectory: stat.isDirectory(),
-      isFile: stat.isFile(),
-    };
+    try {
+      const stat = await fs.stat(filePath);
+      return {
+        size: stat.size,
+        modifiedAt: stat.mtime.toISOString(),
+        createdAt: stat.birthtime.toISOString(),
+        isDirectory: stat.isDirectory(),
+        isFile: stat.isFile(),
+      };
+    } catch (err) {
+      logError('file-stat', filePath, err);
+      throw err;
+    }
   });
 }

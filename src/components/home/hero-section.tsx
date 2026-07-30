@@ -19,9 +19,7 @@ export function HeroSection({
   isScanning = false,
   selectedFolder,
 }: HeroSectionProps) {
-  const scanLabel = selectedFolder
-    ? `Scan "${selectedFolder.split('/').pop()}"`
-    : 'Scan Downloads';
+  const scanLabel = selectedFolder ? `Scan "${selectedFolder.split('/').pop()}"` : 'Scan Downloads';
 
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -29,13 +27,9 @@ export function HeroSection({
         <LogoIcon size={34} className="text-primary-foreground" />
       </div>
 
-      <h1 className="mb-3 text-4xl font-bold tracking-tight sm:text-5xl">
-        {APP_NAME}
-      </h1>
+      <h1 className="mb-3 text-4xl font-bold tracking-tight sm:text-5xl">{APP_NAME}</h1>
 
-      <p className="mb-8 max-w-lg text-lg text-muted-foreground">
-        {APP_TAGLINE}
-      </p>
+      <p className="mb-8 max-w-lg text-lg text-muted-foreground">{APP_TAGLINE}</p>
 
       <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
         <Button

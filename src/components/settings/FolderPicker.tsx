@@ -24,7 +24,7 @@ export function FolderPicker({ selectedPath, onSelect }: Props) {
         >
           {selectedPath || 'Not set'}
         </code>
-        <Button variant="outline" size="sm" onClick={onSelect} className='hover:cursor-pointer'>
+        <Button variant="outline" size="sm" onClick={onSelect} className="hover:cursor-pointer">
           Change Folder
         </Button>
       </div>

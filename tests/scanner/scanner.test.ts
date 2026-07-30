@@ -22,14 +22,18 @@ describe('scanDirectory', () => {
   it('reports progress via callback', async () => {
     const progressUpdates: number[] = [];
 
-    const result = await scanDirectory(FIXTURES_DIR, {
-      includeHidden: false,
-      followSymlinks: false,
-    }, (progress) => {
-      if (progress.phase === 'scanning') {
-        progressUpdates.push(progress.scannedFiles);
-      }
-    });
+    const result = await scanDirectory(
+      FIXTURES_DIR,
+      {
+        includeHidden: false,
+        followSymlinks: false,
+      },
+      (progress) => {
+        if (progress.phase === 'scanning') {
+          progressUpdates.push(progress.scannedFiles);
+        }
+      },
+    );
 
     expect(progressUpdates.length).toBeGreaterThan(0);
     expect(result.totalFiles).toBe(4);

@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { categoryFromExtension, CATEGORIES, CATEGORY_LABELS, CATEGORY_COLORS } from '@/lib/fileCategories';
+import {
+  categoryFromExtension,
+  CATEGORIES,
+  CATEGORY_LABELS,
+  CATEGORY_COLORS,
+} from '@/lib/fileCategories';
 import type { FileCategory } from '@/types';
 
 describe('categoryFromExtension', () => {
@@ -71,9 +76,7 @@ describe('categoryFromExtension', () => {
     expect(categoryFromExtension(ext)).toBe(expected);
   });
 
-  it.each([
-    ['app', 'applications'],
-  ])('maps .%s to applications', (ext, expected) => {
+  it.each([['app', 'applications']])('maps .%s to applications', (ext, expected) => {
     expect(categoryFromExtension(ext)).toBe(expected);
   });
 
@@ -90,10 +93,36 @@ describe('categoryFromExtension', () => {
   });
 
   const codeExtensions = [
-    'js', 'ts', 'tsx', 'jsx', 'py', 'java', 'cpp', 'c', 'h', 'hpp',
-    'rs', 'go', 'rb', 'php', 'swift', 'kt', 'scala',
-    'sh', 'bash', 'zsh', 'yml', 'yaml', 'json', 'xml', 'html',
-    'css', 'scss', 'sql', 'toml', 'cfg',
+    'js',
+    'ts',
+    'tsx',
+    'jsx',
+    'py',
+    'java',
+    'cpp',
+    'c',
+    'h',
+    'hpp',
+    'rs',
+    'go',
+    'rb',
+    'php',
+    'swift',
+    'kt',
+    'scala',
+    'sh',
+    'bash',
+    'zsh',
+    'yml',
+    'yaml',
+    'json',
+    'xml',
+    'html',
+    'css',
+    'scss',
+    'sql',
+    'toml',
+    'cfg',
   ];
   it.each(codeExtensions)('maps .%s to code', (ext) => {
     expect(categoryFromExtension(ext as string)).toBe('code');
@@ -124,8 +153,15 @@ describe('categoryFromExtension', () => {
 describe('CATEGORIES', () => {
   it('contains all expected categories', () => {
     const expected: FileCategory[] = [
-      'images', 'videos', 'documents', 'archives',
-      'installers', 'applications', 'audio', 'code', 'other',
+      'images',
+      'videos',
+      'documents',
+      'archives',
+      'installers',
+      'applications',
+      'audio',
+      'code',
+      'other',
     ];
     expect(CATEGORIES).toEqual(expected);
   });

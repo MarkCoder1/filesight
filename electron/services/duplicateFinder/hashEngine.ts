@@ -6,7 +6,10 @@ const CHUNK_SIZE = 64 * 1024;
 const LARGE_FILE_THRESHOLD = 50 * 1024 * 1024;
 
 export class HashError extends Error {
-  constructor(message: string, public readonly filePath: string) {
+  constructor(
+    message: string,
+    public readonly filePath: string,
+  ) {
     super(message);
     this.name = 'HashError';
   }
@@ -45,7 +48,12 @@ export function calculateFullHash(
 
     stream.on('error', (err: NodeJS.ErrnoException) => {
       if (signal) signal.removeEventListener('abort', onAbort);
-      reject(new HashError(err.code === 'ENOENT' ? `File not found: ${filePath}` : err.message, filePath));
+      reject(
+        new HashError(
+          err.code === 'ENOENT' ? `File not found: ${filePath}` : err.message,
+          filePath,
+        ),
+      );
     });
   });
 }
@@ -93,7 +101,9 @@ function readChunk(filePath: string, start: number, length: number): Promise<Buf
     const buffers: Buffer[] = [];
     stream.on('data', (chunk: unknown) => buffers.push(chunk as Buffer));
     stream.on('end', () => resolve(Buffer.concat(buffers)));
-    stream.on('error', (err: NodeJS.ErrnoException) => reject(new HashError(err.message, filePath)));
+    stream.on('error', (err: NodeJS.ErrnoException) =>
+      reject(new HashError(err.message, filePath)),
+    );
   });
 }
 

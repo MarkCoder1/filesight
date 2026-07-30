@@ -35,6 +35,5 @@ export const useCleanupStore = create<CleanupState>((set) => ({
   setProgress: (progress) => set({ progress }),
   setComplete: (result) => set({ status: 'complete', progress: null, result }),
   setError: (error) => set({ status: 'error', error }),
-  reset: () =>
-    set({ status: 'idle', progress: null, result: null, error: null, pendingFiles: [] }),
+  reset: () => set({ status: 'idle', progress: null, result: null, error: null, pendingFiles: [] }),
 }));

@@ -4,13 +4,7 @@ import { ChevronDown } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import type { FileEntry } from '@/types';
 
 import { EmptyResults } from './EmptyResults';

@@ -50,13 +50,13 @@ export function DuplicateSummary({
             <Copy className="h-6 w-6 text-amber-600 dark:text-amber-400" />
           </div>
           <div>
-            <p className="text-2xl font-bold">{groupCount} duplicate group{groupCount !== 1 ? 's' : ''}</p>
+            <p className="text-2xl font-bold">
+              {groupCount} duplicate group{groupCount !== 1 ? 's' : ''}
+            </p>
             <p className="text-sm text-muted-foreground">
               {totalDuplicates} file{totalDuplicates !== 1 ? 's' : ''} &middot;{' '}
-              <span className="font-medium text-destructive">
-                {formatBytes(wastedSpace)}
-              </span>{' '}
-              can potentially be recovered
+              <span className="font-medium text-destructive">{formatBytes(wastedSpace)}</span> can
+              potentially be recovered
             </p>
           </div>
         </div>

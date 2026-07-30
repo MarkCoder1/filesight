@@ -72,7 +72,7 @@ export function FileFilters({
               className="cursor-pointer capitalize"
               onClick={() => onCategoryChange(cat)}
             >
-              {cat === 'all' ? 'All' : CATEGORY_LABELS[cat] ?? cat}
+              {cat === 'all' ? 'All' : (CATEGORY_LABELS[cat] ?? cat)}
             </Badge>
           ))}
         </div>
@@ -121,7 +121,9 @@ export function FileFilters({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">{resultCount} file{resultCount !== 1 ? 's' : ''}</span>
+          <span className="text-xs text-muted-foreground">
+            {resultCount} file{resultCount !== 1 ? 's' : ''}
+          </span>
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={onReset}>
               <RotateCcw className="h-3 w-3" />

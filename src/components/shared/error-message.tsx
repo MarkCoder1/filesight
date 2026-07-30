@@ -13,10 +13,7 @@ interface Props {
   onDismiss?: () => void;
 }
 
-const errorConfig: Record<
-  Required<Props>['variant'],
-  { icon: LucideIcon; title: string }
-> = {
+const errorConfig: Record<Required<Props>['variant'], { icon: LucideIcon; title: string }> = {
   permission: {
     icon: ShieldX,
     title: 'Permission denied',
@@ -40,10 +37,12 @@ const errorConfig: Record<
 };
 
 const friendlyMessages: Record<Required<Props>['variant'], string> = {
-  permission: 'The app does not have permission to access that folder. Try selecting a different folder or granting access in System Settings.',
+  permission:
+    'The app does not have permission to access that folder. Try selecting a different folder or granting access in System Settings.',
   missing: 'The selected folder no longer exists. It may have been moved or deleted.',
   interrupted: 'The scan was interrupted before it could finish. You can try again.',
-  corrupted: 'Some scan data could not be read. This may be due to a corrupted file or unexpected format.',
+  corrupted:
+    'Some scan data could not be read. This may be due to a corrupted file or unexpected format.',
   generic: 'An unexpected error occurred. Please try again.',
 };
 

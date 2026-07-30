@@ -1,8 +1,16 @@
 import sharp from 'sharp';
 
 const IMAGE_EXTENSIONS = new Set([
-  '.jpg', '.jpeg', '.png', '.gif', '.bmp',
-  '.tiff', '.tif', '.webp', '.avif', '.heic',
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.gif',
+  '.bmp',
+  '.tiff',
+  '.tif',
+  '.webp',
+  '.avif',
+  '.heic',
 ]);
 
 export function isImageFile(filePath: string): boolean {
@@ -25,7 +33,7 @@ export function computeDHash(filePath: string): Promise<string> {
           const left = pixels[y * 9 + x];
           const right = pixels[y * 9 + x + 1];
           if (left > right) {
-            hash |= (1n << BigInt(y * 8 + x));
+            hash |= 1n << BigInt(y * 8 + x);
           }
         }
       }

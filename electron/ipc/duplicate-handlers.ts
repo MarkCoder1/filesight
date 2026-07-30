@@ -1,7 +1,11 @@
 import { ipcMain, type IpcMainInvokeEvent } from 'electron';
 
 import { scanDuplicates } from '../services/duplicateFinder/duplicateEngine';
-import { recommendBestFile, saveDuplicateCleanupRecord, trashDuplicateFiles } from '../services/duplicateFinder/cleanupManager';
+import {
+  recommendBestFile,
+  saveDuplicateCleanupRecord,
+  trashDuplicateFiles,
+} from '../services/duplicateFinder/cleanupManager';
 
 let currentAbortController: AbortController | null = null;
 
@@ -26,9 +30,13 @@ export function registerDuplicateHandlers(): void {
       ipcMain.on('duplicates:cancel', onCancel);
 
       try {
-        const result = await scanDuplicates(files, (progress) => {
-          event.sender.send('duplicates:progress', progress);
-        }, abortController.signal);
+        const result = await scanDuplicates(
+          files,
+          (progress) => {
+            event.sender.send('duplicates:progress', progress);
+          },
+          abortController.signal,
+        );
 
         if (currentAbortController === abortController) {
           currentAbortController = null;
@@ -70,10 +78,21 @@ export function registerDuplicateHandlers(): void {
 
   ipcMain.handle(
     'duplicates:recommend',
-    async (_event, { files }: { files: Array<{
-      path: string; name: string; size: number; modifiedAt: Date;
-      resolution?: { width: number; height: number }; matchType?: string;
-    }> }) => {
+    async (
+      _event,
+      {
+        files,
+      }: {
+        files: Array<{
+          path: string;
+          name: string;
+          size: number;
+          modifiedAt: Date;
+          resolution?: { width: number; height: number };
+          matchType?: string;
+        }>;
+      },
+    ) => {
       return recommendBestFile(files);
     },
   );

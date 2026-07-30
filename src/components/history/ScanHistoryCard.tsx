@@ -28,15 +28,20 @@ export function ScanHistoryCard({ scan, previousScan, onClick }: ScanHistoryCard
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium">{formatRelativeDate(new Date(scan.date))}</p>
-            <p className="text-xs text-muted-foreground">{new Date(scan.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <p className="text-xs text-muted-foreground">
+              {new Date(scan.date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </p>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
               <span>
-                Storage:{' '}
-                <span className="font-medium">{formatBytes(scan.totalSize)}</span>
+                Storage: <span className="font-medium">{formatBytes(scan.totalSize)}</span>
               </span>
               <span>
-                Files:{' '}
-                <span className="font-medium">{scan.totalFiles.toLocaleString()}</span>
+                Files: <span className="font-medium">{scan.totalFiles.toLocaleString()}</span>
               </span>
             </div>
             {previousScan && (

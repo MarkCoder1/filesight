@@ -9,10 +9,7 @@ interface FilesScannedCardProps {
   folderName?: string;
 }
 
-export function FilesScannedCard({
-  count = 0,
-  folderName = 'Downloads',
-}: FilesScannedCardProps) {
+export function FilesScannedCard({ count = 0, folderName = 'Downloads' }: FilesScannedCardProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">

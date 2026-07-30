@@ -10,9 +10,7 @@ export function SectionTitle({ title, description, className }: SectionTitleProp
   return (
     <div className={cn('mb-4', className)}>
       <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
-      {description && (
-        <p className="text-sm text-muted-foreground">{description}</p>
-      )}
+      {description && <p className="text-sm text-muted-foreground">{description}</p>}
     </div>
   );
 }

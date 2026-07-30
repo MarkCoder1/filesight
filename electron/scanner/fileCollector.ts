@@ -75,10 +75,7 @@ export async function collectFiles(
   return { files, errors, totalCount: files.length };
 }
 
-export async function countFiles(
-  dirPath: string,
-  config: ScannerConfig,
-): Promise<number> {
+export async function countFiles(dirPath: string, config: ScannerConfig): Promise<number> {
   let count = 0;
   const visited = new Set<string>();
   const resolvedPath = path.resolve(dirPath);

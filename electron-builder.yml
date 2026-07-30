@@ -1,6 +1,7 @@
 appId: com.filesight.app
 productName: FileSight
 copyright: Copyright © 2026 FileSight
+compression: maximum
 
 directories:
   output: dist
@@ -8,21 +9,22 @@ directories:
 
 files:
   - electron-dist/**/*
+  - '!electron-dist/**/*.js.map'
   - out/**/*
   - package.json
+
+asarUnpack:
+  - out/**/*
+
+afterPack: ./scripts/remove-locales.cjs
 
 mac:
   category: public.app-category.utilities
   target:
     - target: dmg
       arch:
-        - x64
         - arm64
-    - target: zip
-      arch:
-        - x64
-        - arm64
-  artifactName: FileSight-${version}-mac-${arch}.${ext}
+  artifactName: FileSight-${version}-arm64.${ext}
   icon: assets/icons/filesight.icns
   hardenedRuntime: true
   gatekeeperAssess: false
@@ -46,22 +48,10 @@ win:
 
 linux:
   target:
-    - target: AppImage
-      arch:
-        - x64
-    - target: deb
-      arch:
-        - x64
-    - target: rpm
-      arch:
-        - x64
-  artifactName: FileSight-${version}-linux-x64.${ext}
+    - AppImage
+    - deb
   category: Utility
   icon: assets/icons/filesight.png
-  desktop:
-    Name: FileSight
-    Comment: Understand your files. Reclaim your space.
-    Categories: Utility;
 
 nsis:
   oneClick: false

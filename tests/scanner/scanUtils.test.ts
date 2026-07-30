@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { shouldSkipFile, getExtension, getCategory, generateId } from '../../electron/scanner/scanUtils';
+import {
+  shouldSkipFile,
+  getExtension,
+  getCategory,
+  generateId,
+} from '../../electron/scanner/scanUtils';
 
 describe('generateId', () => {
   it('generates a string id', () => {
@@ -43,7 +48,10 @@ describe('shouldSkipFile', () => {
 
   it('includes hidden files when configured', () => {
     expect(
-      shouldSkipFile('.hidden', '/path/.hidden', false, { includeHidden: true, followSymlinks: false }),
+      shouldSkipFile('.hidden', '/path/.hidden', false, {
+        includeHidden: true,
+        followSymlinks: false,
+      }),
     ).toBe(false);
   });
 

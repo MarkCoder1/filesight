@@ -6,10 +6,7 @@ export interface FileFilters {
   date: 'all' | 'today' | 'week' | 'month' | 'old-6m' | 'old-1y';
 }
 
-const SIZE_BOUNDS: Record<
-  Exclude<FileFilters['size'], 'all'>,
-  { min: number; max: number }
-> = {
+const SIZE_BOUNDS: Record<Exclude<FileFilters['size'], 'all'>, { min: number; max: number }> = {
   small: { min: 0, max: 10 * 1024 * 1024 },
   medium: { min: 10 * 1024 * 1024, max: 500 * 1024 * 1024 },
   large: { min: 500 * 1024 * 1024, max: 2 * 1024 * 1024 * 1024 },
@@ -20,10 +17,7 @@ function msAgo(days: number): number {
   return Date.now() - days * 24 * 60 * 60 * 1000;
 }
 
-const DATE_CUTOFFS: Record<
-  Exclude<FileFilters['date'], 'all'>,
-  number
-> = {
+const DATE_CUTOFFS: Record<Exclude<FileFilters['date'], 'all'>, number> = {
   today: msAgo(1),
   week: msAgo(7),
   month: msAgo(30),

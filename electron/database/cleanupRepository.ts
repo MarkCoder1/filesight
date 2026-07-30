@@ -3,9 +3,7 @@ import { randomUUID } from 'crypto';
 import { getData, loadDatabase, saveDatabase } from './database';
 import type { CleanupRecord } from './types';
 
-export async function saveCleanup(
-  record: Omit<CleanupRecord, 'id'>,
-): Promise<CleanupRecord> {
+export async function saveCleanup(record: Omit<CleanupRecord, 'id'>): Promise<CleanupRecord> {
   await loadDatabase();
 
   const data = getData();

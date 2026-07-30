@@ -46,7 +46,7 @@ export function truncatePath(path: string, maxLength: number = 40): string {
 }
 
 export function pluralize(count: number, singular: string, plural?: string): string {
-  return count === 1 ? singular : plural ?? `${singular}s`;
+  return count === 1 ? singular : (plural ?? `${singular}s`);
 }
 
 export function base64ToBlobUrl(base64: string, mime: string): string {

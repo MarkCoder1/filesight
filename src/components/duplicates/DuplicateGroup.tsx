@@ -5,11 +5,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { formatBytes } from '@/lib/utils';
 import type { ConfidenceLevel, DuplicateGroup } from '@/types';
 
@@ -27,11 +23,31 @@ interface DuplicateGroupProps {
 }
 
 const matchLabels: Record<string, { bg: string; text: string; label: string }> = {
-  'hash-exact': { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-600 dark:text-red-400', label: 'Exact' },
-  'filename-similar': { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-400', label: 'Filename' },
-  perceptual: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-600 dark:text-blue-400', label: 'Similar Image' },
-  'document-similar': { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-600 dark:text-green-400', label: 'Similar Doc' },
-  'video-similar': { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-600 dark:text-purple-400', label: 'Similar Video' },
+  'hash-exact': {
+    bg: 'bg-red-100 dark:bg-red-900/30',
+    text: 'text-red-600 dark:text-red-400',
+    label: 'Exact',
+  },
+  'filename-similar': {
+    bg: 'bg-amber-100 dark:bg-amber-900/30',
+    text: 'text-amber-600 dark:text-amber-400',
+    label: 'Filename',
+  },
+  perceptual: {
+    bg: 'bg-blue-100 dark:bg-blue-900/30',
+    text: 'text-blue-600 dark:text-blue-400',
+    label: 'Similar Image',
+  },
+  'document-similar': {
+    bg: 'bg-green-100 dark:bg-green-900/30',
+    text: 'text-green-600 dark:text-green-400',
+    label: 'Similar Doc',
+  },
+  'video-similar': {
+    bg: 'bg-purple-100 dark:bg-purple-900/30',
+    text: 'text-purple-600 dark:text-purple-400',
+    label: 'Similar Video',
+  },
 };
 
 export function DuplicateGroupCard({
@@ -57,14 +73,14 @@ export function DuplicateGroupCard({
           <CollapsibleTrigger asChild>
             <button className="flex flex-1 items-center gap-3 text-left">
               <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${colors.bg}`}>
-                <span className={`text-xs font-bold ${colors.text}`}>
-                  {group.files.length}
-                </span>
+                <span className={`text-xs font-bold ${colors.text}`}>{group.files.length}</span>
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="truncate text-sm font-medium">{file0.name}</p>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${colors.bg} ${colors.text}`}>
+                  <span
+                    className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${colors.bg} ${colors.text}`}
+                  >
                     {colors.label}
                   </span>
                   {recommendedFile.name !== file0.name && isOpen && (
@@ -88,7 +104,12 @@ export function DuplicateGroupCard({
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
           </CollapsibleTrigger>

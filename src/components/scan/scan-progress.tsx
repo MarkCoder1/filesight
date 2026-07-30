@@ -44,9 +44,7 @@ export function ScanProgress({ progress }: ScanProgressProps) {
               {progress.percentage}%
             </span>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Finding storage usage and file details...
-          </p>
+          <p className="text-xs text-muted-foreground">Finding storage usage and file details...</p>
         </div>
       )}
     </div>

@@ -18,9 +18,7 @@ export function OrganizationSummary({ result, onDone }: OrganizationSummaryProps
           <p className="text-lg font-bold text-green-600 dark:text-green-400">
             Organization complete
           </p>
-          <p className="text-sm text-muted-foreground">
-            {formatBytes(result.totalSize)} organized
-          </p>
+          <p className="text-sm text-muted-foreground">{formatBytes(result.totalSize)} organized</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1 text-sm">
@@ -43,11 +41,15 @@ export function OrganizationSummary({ result, onDone }: OrganizationSummaryProps
       </div>
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-lg border bg-muted/30 p-3 text-center">
-          <p className="text-lg font-bold text-green-600 dark:text-green-400">{result.successCount}</p>
+          <p className="text-lg font-bold text-green-600 dark:text-green-400">
+            {result.successCount}
+          </p>
           <p className="text-xs text-muted-foreground">Moved</p>
         </div>
         <div className="rounded-lg border bg-muted/30 p-3 text-center">
-          <p className="text-lg font-bold text-amber-600 dark:text-amber-400">{result.conflictCount}</p>
+          <p className="text-lg font-bold text-amber-600 dark:text-amber-400">
+            {result.conflictCount}
+          </p>
           <p className="text-xs text-muted-foreground">Renamed</p>
         </div>
         <div className="rounded-lg border bg-muted/30 p-3 text-center">

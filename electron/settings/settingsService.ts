@@ -14,9 +14,7 @@ export async function getSettings(): Promise<UserSettings> {
   return settings;
 }
 
-export async function updateSettings(
-  partial: Partial<UserSettings>,
-): Promise<UserSettings> {
+export async function updateSettings(partial: Partial<UserSettings>): Promise<UserSettings> {
   return saveSettings(partial);
 }
 

@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { useIpc } from '@/hooks/use-ipc';
+import { logPreviewError, logPreviewSuccess } from '@/lib/preview-logger';
+import { extname } from '@/lib/path-utils';
 import { base64ToBlobUrl, formatBytes } from '@/lib/utils';
 
 interface AudioPreviewProps {
@@ -20,24 +22,31 @@ export function AudioPreview({ filePath }: AudioPreviewProps) {
 
   useEffect(() => {
     let cancelled = false;
+    const ext = extname(filePath);
     readFileBase64(filePath)
       .then((result) => {
         if (cancelled) return;
         if (result.tooLarge) {
           setTooLarge(true);
           setSize(result.size);
+          logPreviewError(filePath, ext, 'readFileBase64', new Error('File too large'), 'audio');
           return;
         }
         if (!result.data) {
           setError(true);
+          logPreviewError(filePath, ext, 'readFileBase64', new Error('No data returned'), 'audio');
           return;
         }
         const blobUrl = base64ToBlobUrl(result.data, result.mime);
         urlRef.current = blobUrl;
         setUrl(blobUrl);
+        logPreviewSuccess(filePath, ext, 'readFileBase64', 'audio');
       })
-      .catch(() => {
-        if (!cancelled) setError(true);
+      .catch((err) => {
+        if (!cancelled) {
+          setError(true);
+          logPreviewError(filePath, ext, 'readFileBase64', err, 'audio');
+        }
       });
     return () => {
       cancelled = true;

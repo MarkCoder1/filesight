@@ -14,10 +14,15 @@ export function useOrganization() {
   const [result, setResult] = useState<OrgMoveResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<OrgUndoRecord[]>([]);
-  const [undoResult, setUndoResult] = useState<{ undoneCount: number; failedCount: number } | null>(null);
+  const [undoResult, setUndoResult] = useState<{ undoneCount: number; failedCount: number } | null>(
+    null,
+  );
 
   const generatePlan = useCallback(
-    async (files: Array<{ path: string; name: string; size: number; extension: string }>, sourceFolder: string) => {
+    async (
+      files: Array<{ path: string; name: string; size: number; extension: string }>,
+      sourceFolder: string,
+    ) => {
       setIsGenerating(true);
       setError(null);
       setResult(null);
@@ -36,7 +41,14 @@ export function useOrganization() {
     [ipc],
   );
 
-  type MoveInput = { id: string; originalPath: string; newPath: string; fileName: string; size: number; category: string };
+  type MoveInput = {
+    id: string;
+    originalPath: string;
+    newPath: string;
+    fileName: string;
+    size: number;
+    category: string;
+  };
 
   const executeMoves = useCallback(
     async (operations: MoveInput[]) => {

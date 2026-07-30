@@ -33,6 +33,7 @@
 ## Cross-platform Testing
 
 ### macOS
+
 - [ ] Fresh install from DMG
 - [ ] Full scan of Downloads folder (1000+ files)
 - [ ] Duplicate detection works
@@ -44,11 +45,13 @@
 - [ ] Window title is "FileSight"
 
 ### Windows
+
 - [ ] Fresh install from NSIS installer
 - [ ] Scan, duplicates, trash all work
 - [ ] No path separator issues (`\` vs `/`)
 
 ### Linux
+
 - [ ] AppImage launches on Ubuntu 24.04
 - [ ] deb installs and launches
 - [ ] rpm installs and launches

@@ -28,9 +28,7 @@ export function SelectedFilesBar({
         <span className="text-sm font-medium">
           {count} file{count !== 1 ? 's' : ''} selected
         </span>
-        <span className="text-xs text-muted-foreground">
-          &middot; {formatBytes(totalSize)}
-        </span>
+        <span className="text-xs text-muted-foreground">&middot; {formatBytes(totalSize)}</span>
         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClear}>
           <X className="h-3 w-3" />
         </Button>

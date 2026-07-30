@@ -41,10 +41,7 @@ describe('analyzeCategories', () => {
   });
 
   it('calculates percentages correctly', () => {
-    const files = [
-      makeFile('a.jpg', 'images', 1_000),
-      makeFile('b.mp4', 'videos', 3_000),
-    ];
+    const files = [makeFile('a.jpg', 'images', 1_000), makeFile('b.mp4', 'videos', 3_000)];
     const result = analyzeCategories(files);
     const images = result.find((c) => c.category === 'images')!;
     const videos = result.find((c) => c.category === 'videos')!;

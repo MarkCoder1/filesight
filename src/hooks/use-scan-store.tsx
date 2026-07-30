@@ -8,12 +8,14 @@ interface ScanStoreContext {
   lastResult: ScanResult | null;
   setLastResult: (result: ScanResult) => void;
   clearResult: () => void;
+  removeFiles: (paths: string[]) => void;
 }
 
 const ScanStoreCtx = createContext<ScanStoreContext>({
   lastResult: null,
   setLastResult: () => {},
   clearResult: () => {},
+  removeFiles: () => {},
 });
 
 export function ScanStoreProvider({ children }: { children: React.ReactNode }) {
@@ -27,8 +29,25 @@ export function ScanStoreProvider({ children }: { children: React.ReactNode }) {
     setLastResultState(null);
   }, []);
 
+  const removeFiles = useCallback((paths: string[]) => {
+    setLastResultState((prev) => {
+      if (!prev) return prev;
+      const deletedSet = new Set(paths);
+      const files = prev.files.filter((f) => !deletedSet.has(f.path));
+      const removedSize = prev.files
+        .filter((f) => deletedSet.has(f.path))
+        .reduce((s, f) => s + f.size, 0);
+      return {
+        ...prev,
+        files,
+        totalFiles: files.length,
+        totalSize: prev.totalSize - removedSize,
+      };
+    });
+  }, []);
+
   return (
-    <ScanStoreCtx.Provider value={{ lastResult, setLastResult, clearResult }}>
+    <ScanStoreCtx.Provider value={{ lastResult, setLastResult, clearResult, removeFiles }}>
       {children}
     </ScanStoreCtx.Provider>
   );

@@ -41,13 +41,25 @@ export function ScanComparison({
         <div className="flex items-center gap-4 text-sm">
           <div>
             <span className="text-muted-foreground">Storage: </span>
-            <span className={storageDifference <= 0 ? 'font-medium text-green-600 dark:text-green-400' : 'font-medium text-destructive'}>
+            <span
+              className={
+                storageDifference <= 0
+                  ? 'font-medium text-green-600 dark:text-green-400'
+                  : 'font-medium text-destructive'
+              }
+            >
               {storageDifference <= 0 ? '↓' : '↑'} {formatBytes(Math.abs(storageDifference))}
             </span>
           </div>
           <div>
             <span className="text-muted-foreground">Files: </span>
-            <span className={fileDifference <= 0 ? 'font-medium text-green-600 dark:text-green-400' : 'font-medium text-destructive'}>
+            <span
+              className={
+                fileDifference <= 0
+                  ? 'font-medium text-green-600 dark:text-green-400'
+                  : 'font-medium text-destructive'
+              }
+            >
               {fileDifference <= 0 ? '↓' : '↑'} {Math.abs(fileDifference)}
             </span>
           </div>
@@ -61,10 +73,18 @@ export function ScanComparison({
               <div key={cc.category} className="flex items-center justify-between text-xs">
                 <span className="capitalize">{cc.category}</span>
                 <div className="flex gap-3">
-                  <span className={cc.countDiff <= 0 ? 'text-green-600 dark:text-green-400' : 'text-destructive'}>
+                  <span
+                    className={
+                      cc.countDiff <= 0 ? 'text-green-600 dark:text-green-400' : 'text-destructive'
+                    }
+                  >
                     {cc.countDiff <= 0 ? '↓' : '↑'} {Math.abs(cc.countDiff)}
                   </span>
-                  <span className={cc.sizeDiff <= 0 ? 'text-green-600 dark:text-green-400' : 'text-destructive'}>
+                  <span
+                    className={
+                      cc.sizeDiff <= 0 ? 'text-green-600 dark:text-green-400' : 'text-destructive'
+                    }
+                  >
                     {formatBytes(Math.abs(cc.sizeDiff))}
                   </span>
                 </div>

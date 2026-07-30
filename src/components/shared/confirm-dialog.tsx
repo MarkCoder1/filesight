@@ -35,7 +35,8 @@ export function ConfirmDialog({ open, onOpenChange, files, onConfirm, isProcessi
             Move Files To Trash?
           </DialogTitle>
           <DialogDescription>
-            {files.length} file{files.length !== 1 ? 's' : ''} selected &middot; {formatBytes(totalSize)}
+            {files.length} file{files.length !== 1 ? 's' : ''} selected &middot;{' '}
+            {formatBytes(totalSize)}
           </DialogDescription>
         </DialogHeader>
 
@@ -44,9 +45,7 @@ export function ConfirmDialog({ open, onOpenChange, files, onConfirm, isProcessi
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">
-            Files ({files.length})
-          </p>
+          <p className="text-xs font-medium text-muted-foreground">Files ({files.length})</p>
           <ScrollArea className="max-h-48">
             <div className="space-y-1">
               {files.map((file, i) => (

@@ -1,6 +1,15 @@
 'use client';
 
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 import { formatBytes } from '@/lib/utils';
 import type { ScanHistoryRecord } from '@/types';
@@ -54,7 +63,11 @@ export function CategoryTrendChart({ scans }: CategoryTrendChartProps) {
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
           <XAxis dataKey="date" className="text-xs text-muted-foreground" tick={{ fontSize: 11 }} />
-          <YAxis className="text-xs text-muted-foreground" tick={{ fontSize: 11 }} tickFormatter={(v) => `${v} MB`} />
+          <YAxis
+            className="text-xs text-muted-foreground"
+            tick={{ fontSize: 11 }}
+            tickFormatter={(v) => `${v} MB`}
+          />
           <Tooltip
             formatter={(value: unknown) => [formatBytes(Number(value) * 1024 * 1024)]}
             contentStyle={{

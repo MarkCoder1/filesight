@@ -95,7 +95,13 @@ export function ThresholdInput({
       </div>
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1">
-          <Button variant="outline" size="icon" className="h-8 w-8" onClick={decrement} disabled={!allowNull && value !== null && value <= min}>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={decrement}
+            disabled={!allowNull && value !== null && value <= min}
+          >
             <Minus className="h-3 w-3" />
           </Button>
           <div className="flex items-center gap-1">
@@ -111,7 +117,13 @@ export function ThresholdInput({
             />
             {unit && <span className="text-xs text-muted-foreground">{unit}</span>}
           </div>
-          <Button variant="outline" size="icon" className="h-8 w-8" onClick={increment} disabled={max !== undefined && value !== null && value >= max}>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={increment}
+            disabled={max !== undefined && value !== null && value >= max}
+          >
             <Plus className="h-3 w-3" />
           </Button>
         </div>

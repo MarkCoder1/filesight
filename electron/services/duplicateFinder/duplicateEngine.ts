@@ -8,12 +8,13 @@ import {
   getImageResolution,
   isImageFile,
 } from './imageSimilarity';
-import { computeDocumentSimilarity, extractText, isDocumentFile, tokenize } from './documentSimilarity';
 import {
-  computeVideoSimilarity,
-  getVideoMetadata,
-  isVideoFile,
-} from './videoSimilarity';
+  computeDocumentSimilarity,
+  extractText,
+  isDocumentFile,
+  tokenize,
+} from './documentSimilarity';
+import { computeVideoSimilarity, getVideoMetadata, isVideoFile } from './videoSimilarity';
 import type {
   DuplicateFileInfo,
   DuplicateGroup,
@@ -138,7 +139,14 @@ export async function scanDuplicates(
 
     processedFiles++;
     const percentage = 5 + Math.round((processedFiles / candidatesByExt.length) * 40);
-    emitProgress(onProgress, 'hashing', file.name, processedFiles, candidatesByExt.length, percentage);
+    emitProgress(
+      onProgress,
+      'hashing',
+      file.name,
+      processedFiles,
+      candidatesByExt.length,
+      percentage,
+    );
   }
 
   if (signal?.aborted) return emptyResult();
@@ -148,14 +156,16 @@ export async function scanDuplicates(
       const totalSize = dupFiles.reduce((s, f) => s + f.size, 0);
       const wastedSpace = totalSize - dupFiles[0].size;
 
-      const recommended = recommendBestFile(dupFiles.map((f) => ({
-        path: f.path,
-        name: f.name,
-        size: f.size,
-        modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
-        resolution: f.resolution ?? undefined,
-        matchType: f.matchType,
-      })));
+      const recommended = recommendBestFile(
+        dupFiles.map((f) => ({
+          path: f.path,
+          name: f.name,
+          size: f.size,
+          modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
+          resolution: f.resolution ?? undefined,
+          matchType: f.matchType,
+        })),
+      );
       for (const f of dupFiles) {
         f.isRecommended = f.path === recommended?.path;
       }
@@ -186,10 +196,22 @@ export async function scanDuplicates(
   );
 
   if (unmatchedImages.length >= 2) {
-    const imageGroups = await findImageDuplicateGroups(unmatchedImages, groupId, signal, (processed, total) => {
-      const percentage = 50 + Math.round((processed / total) * 15);
-      emitProgress(onProgress, 'perceptual', unmatchedImages[processed]?.name || '', processed, total, percentage);
-    });
+    const imageGroups = await findImageDuplicateGroups(
+      unmatchedImages,
+      groupId,
+      signal,
+      (processed, total) => {
+        const percentage = 50 + Math.round((processed / total) * 15);
+        emitProgress(
+          onProgress,
+          'perceptual',
+          unmatchedImages[processed]?.name || '',
+          processed,
+          total,
+          percentage,
+        );
+      },
+    );
     for (const g of imageGroups) {
       g.id = `dup-${groupId++}`;
       for (const f of g.files) matchedPaths.add(f.path);
@@ -206,10 +228,22 @@ export async function scanDuplicates(
   );
 
   if (unmatchedDocs.length >= 2) {
-    const docGroups = await findDocumentDuplicateGroups(unmatchedDocs, groupId, signal, (processed, total) => {
-      const percentage = 65 + Math.round((processed / total) * 15);
-      emitProgress(onProgress, 'document', unmatchedDocs[processed]?.name || '', processed, total, percentage);
-    });
+    const docGroups = await findDocumentDuplicateGroups(
+      unmatchedDocs,
+      groupId,
+      signal,
+      (processed, total) => {
+        const percentage = 65 + Math.round((processed / total) * 15);
+        emitProgress(
+          onProgress,
+          'document',
+          unmatchedDocs[processed]?.name || '',
+          processed,
+          total,
+          percentage,
+        );
+      },
+    );
     for (const g of docGroups) {
       g.id = `dup-${groupId++}`;
       for (const f of g.files) matchedPaths.add(f.path);
@@ -226,10 +260,22 @@ export async function scanDuplicates(
   );
 
   if (unmatchedVideos.length >= 2) {
-    const videoGroups = await findVideoDuplicateGroups(unmatchedVideos, groupId, signal, (processed, total) => {
-      const percentage = 80 + Math.round((processed / total) * 5);
-      emitProgress(onProgress, 'video', unmatchedVideos[processed]?.name || '', processed, total, percentage);
-    });
+    const videoGroups = await findVideoDuplicateGroups(
+      unmatchedVideos,
+      groupId,
+      signal,
+      (processed, total) => {
+        const percentage = 80 + Math.round((processed / total) * 5);
+        emitProgress(
+          onProgress,
+          'video',
+          unmatchedVideos[processed]?.name || '',
+          processed,
+          total,
+          percentage,
+        );
+      },
+    );
     for (const g of videoGroups) {
       g.id = `dup-${groupId++}`;
       for (const f of g.files) matchedPaths.add(f.path);
@@ -255,14 +301,16 @@ export async function scanDuplicates(
   // Apply recommendations to all groups
   emitProgress(onProgress, 'recommending', '', 0, totalFiles, 95);
   for (const group of duplicateGroups) {
-    const recommended = recommendBestFile(group.files.map((f) => ({
-      path: f.path,
-      name: f.name,
-      size: f.size,
-      modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
-      resolution: f.resolution ?? undefined,
-      matchType: f.matchType,
-    })));
+    const recommended = recommendBestFile(
+      group.files.map((f) => ({
+        path: f.path,
+        name: f.name,
+        size: f.size,
+        modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
+        resolution: f.resolution ?? undefined,
+        matchType: f.matchType,
+      })),
+    );
     if (recommended) {
       for (const f of group.files) {
         f.isRecommended = f.path === recommended.path;
@@ -340,14 +388,16 @@ async function findImageDuplicateGroups(
         const totalSize = similarFiles.reduce((s, f) => s + f.size, 0);
         const wastedSpace = totalSize - similarFiles[0].size;
 
-        const bestFile = recommendBestFile(similarFiles.map((f) => ({
-          path: f.path,
-          name: f.name,
-          size: f.size,
-          modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
-          resolution: f.resolution ?? undefined,
-          matchType: f.matchType,
-        })));
+        const bestFile = recommendBestFile(
+          similarFiles.map((f) => ({
+            path: f.path,
+            name: f.name,
+            size: f.size,
+            modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
+            resolution: f.resolution ?? undefined,
+            matchType: f.matchType,
+          })),
+        );
         for (const f of similarFiles) {
           f.isRecommended = f.path === bestFile?.path;
         }
@@ -397,7 +447,10 @@ async function findDocumentDuplicateGroups(
     if (processed.has(i)) continue;
 
     const textI = texts.get(files[i].path);
-    if (!textI) { processed.add(i); continue; }
+    if (!textI) {
+      processed.add(i);
+      continue;
+    }
 
     const similarFiles: DuplicateFileInfo[] = [
       {
@@ -417,7 +470,10 @@ async function findDocumentDuplicateGroups(
       if (processed.has(j)) continue;
 
       const textJ = texts.get(files[j].path);
-      if (!textJ) { processed.add(j); continue; }
+      if (!textJ) {
+        processed.add(j);
+        continue;
+      }
 
       const similarity = computeDocumentSimilarity(textI, textJ);
 
@@ -440,13 +496,15 @@ async function findDocumentDuplicateGroups(
       const totalSize = similarFiles.reduce((s, f) => s + f.size, 0);
       const wastedSpace = totalSize - similarFiles[0].size;
 
-      const bestFile = recommendBestFile(similarFiles.map((f) => ({
-        path: f.path,
-        name: f.name,
-        size: f.size,
-        modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
-        matchType: f.matchType,
-      })));
+      const bestFile = recommendBestFile(
+        similarFiles.map((f) => ({
+          path: f.path,
+          name: f.name,
+          size: f.size,
+          modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
+          matchType: f.matchType,
+        })),
+      );
       for (const f of similarFiles) f.isRecommended = f.path === bestFile?.path;
 
       groups.push({
@@ -485,7 +543,10 @@ async function findVideoDuplicateGroups(
     if (processed.has(i)) continue;
 
     const metaI = metadataMap.get(files[i].path);
-    if (!metaI) { processed.add(i); continue; }
+    if (!metaI) {
+      processed.add(i);
+      continue;
+    }
 
     const similarFiles: DuplicateFileInfo[] = [
       {
@@ -505,7 +566,10 @@ async function findVideoDuplicateGroups(
       if (processed.has(j)) continue;
 
       const metaJ = metadataMap.get(files[j].path);
-      if (!metaJ) { processed.add(j); continue; }
+      if (!metaJ) {
+        processed.add(j);
+        continue;
+      }
 
       const similarity = computeVideoSimilarity(metaI, metaJ);
 
@@ -528,13 +592,15 @@ async function findVideoDuplicateGroups(
       const totalSize = similarFiles.reduce((s, f) => s + f.size, 0);
       const wastedSpace = totalSize - similarFiles[0].size;
 
-      const bestFile = recommendBestFile(similarFiles.map((f) => ({
-        path: f.path,
-        name: f.name,
-        size: f.size,
-        modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
-        matchType: f.matchType,
-      })));
+      const bestFile = recommendBestFile(
+        similarFiles.map((f) => ({
+          path: f.path,
+          name: f.name,
+          size: f.size,
+          modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
+          matchType: f.matchType,
+        })),
+      );
       for (const f of similarFiles) f.isRecommended = f.path === bestFile?.path;
 
       groups.push({
@@ -555,10 +621,7 @@ async function findVideoDuplicateGroups(
   return groups;
 }
 
-function findFilenameDuplicateGroups(
-  files: ScanFile[],
-  startId: number,
-): DuplicateGroup[] {
+function findFilenameDuplicateGroups(files: ScanFile[], startId: number): DuplicateGroup[] {
   const groups: DuplicateGroup[] = [];
   const matched = new Set<number>();
 
@@ -593,13 +656,15 @@ function findFilenameDuplicateGroups(
         similarity: computeFilenameSimilarity(similar[0].name, f.name),
       }));
 
-      const bestFile = recommendBestFile(groupFiles.map((f) => ({
-        path: f.path,
-        name: f.name,
-        size: f.size,
-        modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
-        matchType: f.matchType,
-      })));
+      const bestFile = recommendBestFile(
+        groupFiles.map((f) => ({
+          path: f.path,
+          name: f.name,
+          size: f.size,
+          modifiedAt: f.modifiedAt instanceof Date ? f.modifiedAt : new Date(f.modifiedAt),
+          matchType: f.matchType,
+        })),
+      );
       for (const f of groupFiles) f.isRecommended = f.path === bestFile?.path;
 
       groups.push({
@@ -635,5 +700,10 @@ function buildResult(groups: DuplicateGroup[]): DuplicateScanResult {
 }
 
 function emptyResult(): DuplicateScanResult {
-  return { duplicateGroups: [], totalDuplicates: 0, wastedSpace: 0, categories: { exact: 0, similarImages: 0, similarDocuments: 0, filename: 0 } };
+  return {
+    duplicateGroups: [],
+    totalDuplicates: 0,
+    wastedSpace: 0,
+    categories: { exact: 0, similarImages: 0, similarDocuments: 0, filename: 0 },
+  };
 }

@@ -42,7 +42,11 @@ export function CategoryChart({ categories }: CategoryChartProps) {
       <CardContent>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} layout="vertical" margin={{ left: 60, right: 20, top: 10, bottom: 10 }}>
+            <BarChart
+              data={data}
+              layout="vertical"
+              margin={{ left: 60, right: 20, top: 10, bottom: 10 }}
+            >
               <XAxis
                 type="number"
                 tickFormatter={(v: number) => formatBytes(v)}
@@ -58,7 +62,10 @@ export function CategoryChart({ categories }: CategoryChartProps) {
                 formatter={(value: unknown, _name: unknown, entry: unknown) => {
                   const v = value as number;
                   const p = entry as { payload?: { count?: number } };
-                  return [`${formatBytes(v)} (${p?.payload?.count ?? 0} files)`, 'Storage'] as [string, string];
+                  return [`${formatBytes(v)} (${p?.payload?.count ?? 0} files)`, 'Storage'] as [
+                    string,
+                    string,
+                  ];
                 }}
                 contentStyle={{ fontSize: 12 }}
               />

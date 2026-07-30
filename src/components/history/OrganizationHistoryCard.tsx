@@ -23,9 +23,8 @@ export function OrganizationHistoryCard({ record, onUndo }: OrganizationHistoryC
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium">{record.label}</p>
             <p className="text-xs text-muted-foreground">
-              {formatRelativeDate(new Date(record.date))} &middot;{' '}
-              {record.totalFiles} file{record.totalFiles !== 1 ? 's' : ''} &middot;{' '}
-              {formatBytes(record.totalSize)}
+              {formatRelativeDate(new Date(record.date))} &middot; {record.totalFiles} file
+              {record.totalFiles !== 1 ? 's' : ''} &middot; {formatBytes(record.totalSize)}
             </p>
           </div>
           <Button

@@ -19,9 +19,7 @@ export function FileMovePreview({ category }: FileMovePreviewProps) {
           {category.fileCount} file{category.fileCount !== 1 ? 's' : ''} &middot;{' '}
           {formatBytes(category.totalSize)}
         </p>
-        <p className="truncate text-xs text-muted-foreground">
-          &rarr; {category.suggestedPath}
-        </p>
+        <p className="truncate text-xs text-muted-foreground">&rarr; {category.suggestedPath}</p>
       </div>
       <ScrollArea className="max-h-64">
         <div className="space-y-1">

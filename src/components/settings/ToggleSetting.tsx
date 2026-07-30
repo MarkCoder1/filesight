@@ -15,7 +15,10 @@ export function ToggleSetting({ label, description, checked, onCheckedChange }: 
   return (
     <div className="flex items-start justify-between gap-4">
       <div className="space-y-0.5">
-        <label htmlFor={id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+        <label
+          htmlFor={id}
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+        >
           {label}
         </label>
         <p className="text-xs text-muted-foreground">{description}</p>

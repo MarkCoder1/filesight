@@ -33,9 +33,7 @@ export function RecentFilesTable({ files }: RecentFilesTableProps) {
       <TableBody>
         {sorted.slice(0, 5).map((file) => (
           <TableRow key={file.path} className="cursor-pointer">
-            <TableCell className="max-w-[200px] truncate font-medium">
-              {file.name}
-            </TableCell>
+            <TableCell className="max-w-[200px] truncate font-medium">{file.name}</TableCell>
             <TableCell>{formatBytes(file.size)}</TableCell>
             <TableCell className="capitalize">{file.category}</TableCell>
             <TableCell>{formatRelativeDate(file.createdAt)}</TableCell>

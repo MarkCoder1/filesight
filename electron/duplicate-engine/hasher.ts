@@ -6,7 +6,10 @@ const CHUNK_SIZE = 64 * 1024;
 const LARGE_FILE_THRESHOLD = 50 * 1024 * 1024;
 
 export class HashError extends Error {
-  constructor(message: string, public readonly filePath: string) {
+  constructor(
+    message: string,
+    public readonly filePath: string,
+  ) {
     super(message);
     this.name = 'HashError';
   }

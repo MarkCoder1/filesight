@@ -11,9 +11,7 @@ interface OldFilesCardProps {
 
 export function OldFilesCard({ oldFiles }: OldFilesCardProps) {
   if (oldFiles.files.length === 0) {
-    return (
-      <p className="py-8 text-center text-sm text-muted-foreground">No old files found.</p>
-    );
+    return <p className="py-8 text-center text-sm text-muted-foreground">No old files found.</p>;
   }
 
   return (
@@ -49,9 +47,7 @@ export function OldFilesCard({ oldFiles }: OldFilesCardProps) {
           </div>
         ))}
         {oldFiles.files.length > 10 && (
-          <p className="text-xs text-muted-foreground">
-            +{oldFiles.files.length - 10} more files
-          </p>
+          <p className="text-xs text-muted-foreground">+{oldFiles.files.length - 10} more files</p>
         )}
       </div>
     </div>

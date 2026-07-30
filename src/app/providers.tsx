@@ -7,12 +7,7 @@ import { ScanStoreProvider } from '@/hooks/use-scan-store';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <ScanStoreProvider>
         <AppShell>{children}</AppShell>
       </ScanStoreProvider>

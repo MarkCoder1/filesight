@@ -2,7 +2,12 @@ import { ipcMain } from 'electron';
 
 import { generatePlan } from '../services/organizationEngine';
 import { executeMoves } from '../services/moveManager';
-import { saveOrganizationRecord, undoMoves, getUndoHistory, removeUndoRecord } from '../services/undoManager';
+import {
+  saveOrganizationRecord,
+  undoMoves,
+  getUndoHistory,
+  removeUndoRecord,
+} from '../services/undoManager';
 
 export function registerOrganizationHandlers(): void {
   ipcMain.handle('org:generate-plan', async (_event, { files, sourceFolder }) => {

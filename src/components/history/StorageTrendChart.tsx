@@ -1,6 +1,14 @@
 'use client';
 
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 import { formatBytes } from '@/lib/utils';
 import type { ScanHistoryRecord } from '@/types';
@@ -35,11 +43,7 @@ export function StorageTrendChart({ scans }: StorageTrendChartProps) {
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-          <XAxis
-            dataKey="date"
-            className="text-xs text-muted-foreground"
-            tick={{ fontSize: 11 }}
-          />
+          <XAxis dataKey="date" className="text-xs text-muted-foreground" tick={{ fontSize: 11 }} />
           <YAxis
             className="text-xs text-muted-foreground"
             tick={{ fontSize: 11 }}

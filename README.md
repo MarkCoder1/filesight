@@ -93,13 +93,13 @@ Three levels of duplicate detection with smart recommendations:
 
 Preview supported file types directly in the application — no external viewers needed:
 
-| Type | Formats |
-|------|---------|
-| Images | PNG, JPG, JPEG, GIF, WebP, SVG, BMP, ICO |
-| Text | TXT, MD, JSON, JS, TS, JSX, TSX, HTML, CSS, XML, CSV, LOG |
-| PDF | PDF |
-| Audio | MP3, WAV, OGG, M4A |
-| Video | MP4, MOV, WebM, AVI, MKV |
+| Type   | Formats                                                   |
+| ------ | --------------------------------------------------------- |
+| Images | PNG, JPG, JPEG, GIF, WebP, SVG, BMP, ICO                  |
+| Text   | TXT, MD, JSON, JS, TS, JSX, TSX, HTML, CSS, XML, CSV, LOG |
+| PDF    | PDF                                                       |
+| Audio  | MP3, WAV, OGG, M4A                                        |
+| Video  | MP4, MOV, WebM, AVI, MKV                                  |
 
 ### History & Tracking
 
@@ -123,8 +123,8 @@ Files are never deleted without confirmation. The cleanup workflow is:
 
 ## Screenshots
 
-| Home | Dashboard | History |
-|:---:|:---:|:---:|
+|                  Home                  |                    Dashboard                     |                   History                    |
+| :------------------------------------: | :----------------------------------------------: | :------------------------------------------: |
 | ![Home](./assets/screenshots/home.png) | ![Dashboard](./assets/screenshots/dashboard.png) | ![History](./assets/screenshots/history.png) |
 
 ---
@@ -226,18 +226,18 @@ FileSight is an **Electron + Next.js** application. The frontend is a static Nex
 
 All business logic runs in the main process:
 
-| Module | Responsibility |
-|--------|---------------|
-| `electron/scanner/` | Recursive directory traversal, metadata extraction, progress reporting |
-| `electron/analyzer/` | Storage analysis, category breakdown, suggestion generation |
-| `electron/services/duplicateFinder/` | Three-level duplicate detection engine |
-| `electron/services/fileClassifier.ts` | Extension-to-category mapping |
-| `electron/services/organizationEngine.ts` | Organization plan generation |
-| `electron/services/moveManager.ts` | Safe file moves with conflict resolution |
-| `electron/services/undoManager.ts` | Move reversal and undo record persistence |
-| `electron/duplicate-engine/` | Legacy duplicate detection (simpler hashing + filename matching) |
-| `electron/cleanup/` | Trash integration via `shell.trashItem()` |
-| `electron/settings/` | User preferences persistence |
+| Module                                    | Responsibility                                                         |
+| ----------------------------------------- | ---------------------------------------------------------------------- |
+| `electron/scanner/`                       | Recursive directory traversal, metadata extraction, progress reporting |
+| `electron/analyzer/`                      | Storage analysis, category breakdown, suggestion generation            |
+| `electron/services/duplicateFinder/`      | Three-level duplicate detection engine                                 |
+| `electron/services/fileClassifier.ts`     | Extension-to-category mapping                                          |
+| `electron/services/organizationEngine.ts` | Organization plan generation                                           |
+| `electron/services/moveManager.ts`        | Safe file moves with conflict resolution                               |
+| `electron/services/undoManager.ts`        | Move reversal and undo record persistence                              |
+| `electron/duplicate-engine/`              | Legacy duplicate detection (simpler hashing + filename matching)       |
+| `electron/cleanup/`                       | Trash integration via `shell.trashItem()`                              |
+| `electron/settings/`                      | User preferences persistence                                           |
 
 ### Storage
 
@@ -316,12 +316,12 @@ For full details, see [docs/PRIVACY.md](docs/PRIVACY.md) and [SECURITY.md](SECUR
 
 Download the latest release for your platform from the [Releases page](https://github.com/anomalyco/filesight/releases).
 
-| Platform | Format | Command |
-|----------|--------|---------|
-| macOS    | `.dmg` | Open DMG, drag to Applications |
-| Windows  | `.exe` | Run installer |
+| Platform | Format      | Command                              |
+| -------- | ----------- | ------------------------------------ |
+| macOS    | `.dmg`      | Open DMG, drag to Applications       |
+| Windows  | `.exe`      | Run installer                        |
 | Linux    | `.AppImage` | `chmod +x && ./FileSight-*.AppImage` |
-| Linux    | `.deb` | `sudo dpkg -i FileSight-*.deb` |
+| Linux    | `.deb`      | `sudo dpkg -i FileSight-*.deb`       |
 
 ### Build from Source
 
@@ -346,14 +346,14 @@ See [docs/INSTALLATION.md](docs/INSTALLATION.md) for detailed setup instructions
 
 ## Building
 
-| Command | Output |
-|---------|--------|
-| `npm run dist:mac` | `dist/FileSight-*-mac.dmg` |
-| `npm run dist:win` | `dist/FileSight-*-win.exe` |
-| `npm run dist` | Current platform package |
-| `npm run build:next` | `out/` (static HTML export) |
+| Command                  | Output                                 |
+| ------------------------ | -------------------------------------- |
+| `npm run dist:mac`       | `dist/FileSight-*-mac.dmg`             |
+| `npm run dist:win`       | `dist/FileSight-*-win.exe`             |
+| `npm run dist`           | Current platform package               |
+| `npm run build:next`     | `out/` (static HTML export)            |
 | `npm run build:electron` | `electron-dist/` (compiled TypeScript) |
-| `npm test` | Test results (279 tests) |
+| `npm test`               | Test results (279 tests)               |
 
 The build pipeline: Next.js static export → Electron TypeScript compilation → electron-builder packaging. See [electron-builder.yml](./electron-builder.yml) for full configuration.
 
@@ -380,23 +380,23 @@ The build pipeline: Next.js static export → Electron TypeScript compilation �
 
 ## Technology Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Framework** | Next.js 16 (static export) |
-| **UI Library** | React 19 |
-| **Desktop** | Electron 43 |
-| **Language** | TypeScript 5 |
-| **Styling** | Tailwind CSS 4 |
-| **State** | Zustand 5 |
-| **Charts** | Recharts 3 |
-| **Icons** | Lucide React 1 |
-| **UI Primitives** | Radix UI (dialog, tabs, collapsible, checkbox, scroll-area, progress) |
-| **Hashing** | Node.js crypto (SHA-256) |
-| **Image Analysis** | Sharp (perceptual dHash) |
-| **Document Parsing** | pdf-parse (PDF), mammoth (DOCX) |
-| **Testing** | Vitest (279 tests across 19 test suites) |
-| **Building** | electron-builder 26 |
-| **Package Manager** | npm |
+| Layer                | Technology                                                            |
+| -------------------- | --------------------------------------------------------------------- |
+| **Framework**        | Next.js 16 (static export)                                            |
+| **UI Library**       | React 19                                                              |
+| **Desktop**          | Electron 43                                                           |
+| **Language**         | TypeScript 5                                                          |
+| **Styling**          | Tailwind CSS 4                                                        |
+| **State**            | Zustand 5                                                             |
+| **Charts**           | Recharts 3                                                            |
+| **Icons**            | Lucide React 1                                                        |
+| **UI Primitives**    | Radix UI (dialog, tabs, collapsible, checkbox, scroll-area, progress) |
+| **Hashing**          | Node.js crypto (SHA-256)                                              |
+| **Image Analysis**   | Sharp (perceptual dHash)                                              |
+| **Document Parsing** | pdf-parse (PDF), mammoth (DOCX)                                       |
+| **Testing**          | Vitest (279 tests across 19 test suites)                              |
+| **Building**         | electron-builder 26                                                   |
+| **Package Manager**  | npm                                                                   |
 
 ---
 

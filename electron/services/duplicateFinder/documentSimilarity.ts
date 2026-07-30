@@ -102,10 +102,7 @@ function computeTFIDV(tokens: string[], idf: Map<string, number>): Map<string, n
   return tfidf;
 }
 
-function cosineSimilarity(
-  vecA: Map<string, number>,
-  vecB: Map<string, number>,
-): number {
+function cosineSimilarity(vecA: Map<string, number>, vecB: Map<string, number>): number {
   let dotProduct = 0;
   let normA = 0;
   let normB = 0;

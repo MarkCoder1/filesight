@@ -49,7 +49,8 @@ export function useFileFilters(files: FileEntry[]): UseFileFiltersReturn {
   const [filters, setFilters] = useState<FileFiltersState>(DEFAULT_FILTERS);
 
   const setSearch = (search: string) => setFilters((prev) => ({ ...prev, search }));
-  const setCategory = (category: FileCategory | 'all') => setFilters((prev) => ({ ...prev, category }));
+  const setCategory = (category: FileCategory | 'all') =>
+    setFilters((prev) => ({ ...prev, category }));
   const setSizeRange = (sizeRange: SizeRange) => setFilters((prev) => ({ ...prev, sizeRange }));
   const setSortBy = (sortBy: SortField) => setFilters((prev) => ({ ...prev, sortBy }));
   const toggleSortOrder = () =>
@@ -57,9 +58,7 @@ export function useFileFilters(files: FileEntry[]): UseFileFiltersReturn {
   const resetFilters = () => setFilters(DEFAULT_FILTERS);
 
   const hasActiveFilters =
-    filters.search !== '' ||
-    filters.category !== 'all' ||
-    filters.sizeRange !== 'all';
+    filters.search !== '' || filters.category !== 'all' || filters.sizeRange !== 'all';
 
   const filtered = useMemo(() => {
     let result = [...files];

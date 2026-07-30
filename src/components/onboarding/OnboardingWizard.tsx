@@ -61,7 +61,9 @@ export function OnboardingWizard({ onComplete }: Props) {
           {steps.map((step) => (
             <Card key={step.title} className="border-muted">
               <CardContent className="flex items-start gap-4 p-4">
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${step.bg}`}>
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${step.bg}`}
+                >
                   <step.icon className={`h-5 w-5 ${step.color}`} />
                 </div>
                 <div>
@@ -74,7 +76,11 @@ export function OnboardingWizard({ onComplete }: Props) {
         </div>
 
         <div className="space-y-3 text-center">
-          <Button size="xl" className="w-full gap-2 shadow-lg shadow-primary/20 hover:cursor-pointer" onClick={handleStart}>
+          <Button
+            size="xl"
+            className="w-full gap-2 shadow-lg shadow-primary/20 hover:cursor-pointer"
+            onClick={handleStart}
+          >
             <FolderOpen className="h-5 w-5" />
             Choose Folder &amp; Start
           </Button>
