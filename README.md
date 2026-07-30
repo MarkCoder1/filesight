@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-  <img src="./assets/logo/logo.svg" width="80" height="80" alt="FileSight Logo" />
+  <img src="./assets/logo/filesight.png" width="80" height="80" alt="FileSight Logo" />
   <h1 align="center">FileSight</h1>
   <p align="center">
     <strong>Understand your files. Reclaim your space.</strong>
@@ -47,9 +47,9 @@ FileSight gives you a clear picture of your files so you can make informed decis
 
 ## Screenshots
 
-| Home                                   | Dashboard                                        | Duplicates                                         |
+| Home                                   | Dashboard                                        | History                                         |
 | -------------------------------------- | ------------------------------------------------ | -------------------------------------------------- |
-| ![Home](./assets/screenshots/home.png) | ![Dashboard](./assets/screenshots/dashboard.png) | ![Duplicates](./assets/screenshots/duplicates.png) |
+| ![Home](./assets/screenshots/home.png) | ![Dashboard](./assets/screenshots/dashboard.png) | ![Duplicates](./assets/screenshots/history.png) |
 
 ## Installation
 
@@ -64,10 +64,6 @@ FileSight gives you a clear picture of your files so you can make informed decis
 1. Download the latest `-win.exe` from the [Releases page](https://github.com/anomalyco/filesight/releases).
 2. Run the installer and follow the setup wizard.
 3. Launch FileSight from the Start menu or desktop shortcut.
-
-### Linux
-
-Download the latest `-linux.AppImage` or `.deb` from the [Releases page](https://github.com/anomalyco/filesight/releases).
 
 **AppImage:**
 
@@ -116,6 +112,10 @@ Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 [MIT](./LICENSE) — see [LICENSE](./LICENSE) for details.
 
 ---
+## Download
+
+Get FileSight:
+[Download Latest Release](https://github.com/MarkCoder1/filesight/releases/latest)
 
 <p align="center">
   <sub>Built with Electron + Next.js. Runs entirely on your device.</sub>
