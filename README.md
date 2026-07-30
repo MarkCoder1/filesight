@@ -314,7 +314,7 @@ For full details, see [docs/PRIVACY.md](docs/PRIVACY.md) and [SECURITY.md](SECUR
 
 ### Pre-built Binaries
 
-Download the latest release for your platform from the [Releases page](https://github.com/anomalyco/filesight/releases).
+Download the latest release for your platform from the [Releases page](https://github.com/MarkCoder1/filesight/releases/tag/v1.0.0).
 
 | Platform | Format      | Command                              |
 | -------- | ----------- | ------------------------------------ |
